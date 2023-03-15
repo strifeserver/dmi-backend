@@ -1,0 +1,214 @@
+@extends('layouts/contentLayoutMaster')
+@section('title', $title)
+@section('vendor-style')
+  {{-- vendor css files --}}
+  <link rel="stylesheet" href="{{ asset(mix('vendors/css/tables/ag-grid/ag-grid.css')) }}">
+  <link rel="stylesheet" href="{{ asset(mix('vendors/css/tables/ag-grid/ag-theme-material.css')) }}">
+@endsection
+
+@section('page-style')
+{{-- Page Css files --}}
+  <link rel="stylesheet" href="{{ asset(mix('css/pages/app-user.css')) }}">
+  <link rel="stylesheet" href="{{ asset(mix('css/pages/aggrid.css')) }}">
+@endsection
+
+@section('content')
+<!-- Basic example section start -->
+<section id="basic-examples">
+
+  <!-- users filter start -->
+  <div class="card">
+    <div class="card-header">
+      <h4 class="card-title">Filters</h4>
+      <a class="heading-elements-toggle"><i class="fa fa-ellipsis-v font-medium-3"></i></a>
+      <div class="heading-elements">
+        <ul class="list-inline mb-0">
+          <li><a data-action="collapse"><i class="feather icon-chevron-down"></i></a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="card-content collapse show">
+      <div class="card-body">
+        <div class="users-list-filter">
+          <form>
+            <div class="row">
+              <div class="col-12 col-sm-6 col-lg-3">
+                <label for="users-list-role">Role</label>
+                <fieldset class="form-group">
+                  <select class="form-control" id="accesslevel">
+                    <option value="">All</option>
+                    <option value="Core">Core</option>
+                    <option value="User">User</option>
+                  </select>
+                </fieldset>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- users filter end -->
+
+  <div class="card">
+    <div class="card-content">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-12">
+
+            @if(session()->get('success'))
+              <div class="alert alert-success">
+                {{ session()->get('success') }}
+              </div>
+              <br />
+            @endif
+
+            <div class="ag-grid-btns d-flex justify-content-between flex-wrap mb-1">
+
+              <div class="dropdown sort-dropdown mb-1 mb-sm-0">
+                <button
+                  class="btn btn-white filter-btn dropdown-toggle border text-dark"
+                  type="button"
+                  id="dropdownMenuButton6"
+                  data-toggle="dropdown"
+                  aria-haspopup="true"
+                  aria-expanded="false">
+                  1 - 20 of 500
+                </button>
+
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton6">
+                  <a class="dropdown-item" href="#">20</a>
+                  <a class="dropdown-item" href="#">50</a>
+                  <a class="dropdown-item" href="#">100</a>
+                  <a class="dropdown-item" href="#">150</a>
+                </div>
+              </div>
+
+              <div class="ag-btns d-flex flex-wrap">
+                <input
+                  type="text"
+                  class="ag-grid-filter form-control w-50 mr-1 mb-1 mb-sm-0"
+                  id="filter-text-box"
+                  placeholder="Search...." />
+
+                <div class="action-btns">
+                  <div class="btn-dropdown ">
+                    <div class="btn-group dropdown actions-dropodown">
+                      <button type="button" class="btn btn-white px-2 py-75 dropdown-toggle waves-effect waves-light"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Actions
+                      </button>
+
+                      <div class="dropdown-menu">
+                        <a class="dropdown-item  ag-grid-export-btn" href="#"><i class="feather icon-download"></i> Export as CSV</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="myGrid" class="aggrid ag-theme-material"></div>
+
+
+          {{-- Modal --}}
+            <div class="modal fade" id="modal" tabindex="-1" role="dialog"
+              aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered modal-dialog-centered modal-dialog-scrollable"
+                role="document">
+                <div class="modal-content">
+                  <div class="modal-header bg-danger">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">Delete</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div id="modal_msg"class="modal-body">
+                    Are you sure you want to delete?
+                  </div>
+                  <div class="modal-footer">
+                    <form id="delform" action="" method="POST">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- // Basic example section end -->
+@endsection
+
+@section('vendor-script')
+{{-- vendor files --}}
+  <script src="{{ asset(mix('vendors/js/tables/ag-grid/ag-grid-community.min.noStyle.js')) }}"></script>
+@endsection
+
+@section('page-script')
+  <script src="{{ asset('js/tables.js') }}"></script>
+<script>
+  $(document).ready(function() {
+
+    var start = function(config)
+    {
+      var controls = [
+        {
+          type: 'link',
+          class: 'btn btn-secondary',
+          href: 'api_logs/{id}/edit',
+          icon: 'feather icon-edit'
+        },
+
+        {
+          id: 'delete',
+          type: 'action',
+          class: 'btn btn-danger',
+          icon: 'feather icon-trash-2',
+          attr: {
+            'data-toggle': 'modal',
+            'data-target': '#modal'
+          }
+              // action: MyModal.stdHandler
+        }
+      ];
+
+      config.columns.unshift({
+        field: 'id',
+        colId: 'id_ctrl', // prevent adding _{n} suffix in real id field
+        width: 35,
+        headerName: 'Controls',
+        sortable: false,
+        filter: false,
+
+        cellRenderer: RowControlsRenderer,
+        cellRendererParams: {
+          'config': controls
+        }
+      });
+
+      var gridElem = document.getElementById("myGrid");
+
+      window.framework = {
+        table: new TableWrapper(config, gridElem)
+      }
+    }
+
+    $.get('/tableinfo/api_logs')
+      .done((response) => {
+        start(response)
+      });
+
+});
+
+</script>
+
+@endsection
+

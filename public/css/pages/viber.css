@@ -1,0 +1,54 @@
+.viberPreview {
+width: 300px !important;
+border: solid thin grey !important;
+background-color: grey;
+color: white;
+border-radius: 8px;
+}
+
+
+.viberPreview .viberHeader {
+padding: 10px;
+}
+
+.viberPreview .viberImage {
+background-color: white;
+height: 300px;
+width: 300px;
+text-align: center !important;
+}
+
+.viberPreview .viberImage div {
+   height:300px !important;
+   text-indent: -9999px;
+}
+
+.viberPreview .viberFooter {
+padding: 10px;
+}
+
+.viberPreview .viberFooter button {
+width: 150px;
+height: 30px;
+background-color: #6655d8;
+border-radius: 15px;
+border: none !important;
+color: #FFF;
+clear: both !important;
+}
+
+.viberPreview .viberFooter button a {
+color: #FFF !important;
+}
+
+
+
+
+
+.viberPreview .viberTime {
+padding: 0px 5px 5px 0px !important;
+text-align: right !important;
+color: #c2c2c2;
+clear: both !important;
+
+}
