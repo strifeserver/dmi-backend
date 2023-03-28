@@ -66,6 +66,12 @@ return [
             'url' => env('APP_URL').'/storage',
             'visibility' => 'images',
         ],
+        'customer_survey_files' => [
+            'driver' => 'local',
+            'root' => storage_path('app/customer_survey_files'),
+            'url' => env('APP_URL').'/storage',
+            'visibility' => 'customer_survey_files',
+        ],
 
         's3' => [
             'driver' => 's3',
@@ -82,6 +88,7 @@ return [
         public_path('storage') => storage_path('app/public'),
         public_path('import_images') => storage_path('app/import_images'),
         public_path('images') => storage_path('app/images'),
+        public_path('customer_survey_files') => storage_path('app/customer_survey_files'),
     ],
 
 ];

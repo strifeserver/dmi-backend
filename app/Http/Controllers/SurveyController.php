@@ -16,6 +16,7 @@ use App\Survey;
 use Helper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Storage;
 
 class SurveyController extends Controller implements Paginatable
 {
@@ -206,7 +207,7 @@ class SurveyController extends Controller implements Paginatable
 
     public function store(SurveyPostRequest $request)
     {
-
+        exit;
         $page_variables = $this->pageService->page_variables(['controller_variables' => $this->controller_variables(), 'mode' => 'Create']);
         $validated = $request->validated();
         $execution = $this->SurveyService->store($validated);
@@ -283,7 +284,7 @@ class SurveyController extends Controller implements Paginatable
         return response($returns, $code)->header('Content-Type', 'application/json');
     }
 
-    public function create_survey(request $request)
+    public function create_survey(Request $request)
     {
 
         $check_schedule_data = [
@@ -292,8 +293,9 @@ class SurveyController extends Controller implements Paginatable
         $check_schedule = $this->ScheduleService->index($check_schedule_data);
         if (!empty($check_schedule['result'])) {
             $response = Helper::apiResponse('error', 400, 'Failed to create survey');
-      
+
         } else {
+
             // create survey
             $survey_id = $this->generateTicket();
             $to_validate = [
@@ -302,8 +304,10 @@ class SurveyController extends Controller implements Paginatable
                 'address' => request('address'),
                 'email_address' => request('email_address'),
                 'mobile_number' => request('mobile_number'),
-                'customer_survey_files' => request('customer_survey_files'),
+                'customer_survey_files' => $request->file('customer_survey_files'),
             ];
+
+
             $execution = $this->SurveyService->store($to_validate);
 
             $to_validate = [
@@ -312,19 +316,18 @@ class SurveyController extends Controller implements Paginatable
                 'approved_by' => request('approved_by'),
                 'schedule_raw' => date(request('requested_schedule')),
                 'date' => date(request('requested_schedule')),
-                // 'schedule_raw' => date('2023-02-20'),
-                // 'date' => date('2023-02-20'),
+                'customer_survey_files' => $request->file('customer_survey_files'),
                 'time' => null,
                 'status' => 1,
             ];
             $createSchedule = $this->ScheduleService->store($to_validate);
 
             if ($execution['status'] == 'success' && $createSchedule['status'] == 'success') {
-                $response = Helper::apiResponse('success', 200, 'Survey Successfully Created', ['survey_id' => $survey_id,'debug'=>json_encode($check_schedule)]);
+                $response = Helper::apiResponse('success', 200, 'Survey Successfully Created', ['survey_id' => $survey_id, 'debug' => json_encode($check_schedule)]);
             } else {
                 $response = Helper::apiResponse('error', 400, 'Failed to create survey');
             }
-            
+
         }
 
         return response()->json($response);

@@ -199,10 +199,10 @@ class Survey extends Model
         $returns = [];
         $id = optional($request)->get('id', '');
         $fields = $this->fillable;
-
+        
         $submittedData = collect($request)->only($fields)->toArray();
-        $execute = $this::create($submittedData)->id;
 
+        $execute = $this::create($submittedData)->id;
         $executeStatus = (is_integer($execute)) ? 1 : 0;
         $returns['status'] = $executeStatus;
         $returns['data_id'] = $execute;

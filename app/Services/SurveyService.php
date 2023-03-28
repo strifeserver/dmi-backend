@@ -6,7 +6,7 @@ use App\Services\ApiService;
 use App\Services\AuditTrailService;
 use App\Services\ScheduleService;
 use App\Survey;
-
+use Illuminate\Support\Facades\Storage;
 class SurveyService
 {
 /**
@@ -46,8 +46,19 @@ class SurveyService
  * @param array $request
  * @return array
  */
-    public function store(array $request): array
+    public function store(array $request)
     {
+
+        $customer_file_names = [];
+        $customer_survey_files_upload = $request['customer_survey_files'];
+        foreach ($customer_survey_files_upload as $key => $value) {
+            $naming_convention = $request['survey_id'];
+            $new_file_name = $naming_convention.'_' . $value->getClientOriginalName();
+            $path = Storage::putFileAs('customer_survey_files', $value, $new_file_name);
+            $customer_file_names[] = $value->getClientOriginalName();
+        }
+        $request['customer_survey_files'] = json_encode($customer_file_names);
+
         $execution = $this->repository->store($request);
 
         if ($execution['status'] === 1) {
@@ -56,7 +67,6 @@ class SurveyService
         }
 
         $response = $this->api_service->api_returns($execution);
-
         return $response;
     }
 
@@ -69,13 +79,20 @@ class SurveyService
 
         $execution = $this->repository->edit($Id);
         $response = $this->api_service->api_returns($execution);
-
         $ScheduleService = app(ScheduleService::class);
 
         $paramData = ['filters' => ['survey_id' => $response['result']['id']]];
         $fetchSchedule = $ScheduleService->index($paramData);
         if ($fetchSchedule) {
+            $new_customer_survey_files = [];
             $response['result']['schedule'] = $fetchSchedule['result'][0]['date'];
+            $customer_survey_files = $response['result']['customer_survey_files'];
+            $customer_survey_files = json_decode($customer_survey_files);
+            foreach ($customer_survey_files as $key => $value) {
+                $new_customer_survey_files[] = url('/').'/customer_survey_files/'.$response['result']['survey_id'].'_'.$value;
+            }
+            $response['result']['customer_survey_files'] = $new_customer_survey_files;
+      
         }
 
         return $response;

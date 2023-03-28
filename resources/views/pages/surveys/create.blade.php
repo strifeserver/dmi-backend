@@ -192,7 +192,25 @@
                                                 </div>
                                             </div>
                                         </div>
-{{-- 
+                                        <div class="col-12">
+                                            <div class="form-group row">
+                                                <div class="col-md-4">
+                                                    <span></span>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <div class="position-relative has-icon-left">
+
+                                                        <input id="customer_survey_files" type="text" readonly
+                                                            class="form-control @error('customer_survey_files') is-invalid @enderror"
+                                                            name="customer_survey_files"
+                                                            value="{{ $mode == 'Update' ? @$edit->customer_survey_files : old('customer_survey_files') }}"
+                                                            autocomplete="customer_survey_files" autofocus>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {{-- 
                                         <div class="col-12" >
                                             <div class="form-group row">
                                                 <div class="col-md-4">
@@ -304,6 +322,13 @@
                                         </div>
                                     </div>
                                     <hr>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div id="customer_survey_area"></div>
+                                        </div>
+                                    </div>
+
+                                    <hr>
 
                                 </div>
                                 <div class="col-md-12">
@@ -333,6 +358,8 @@
                         </div>
                     </div>
                 </div>
+
+                
             </div>
         </div>
         </div>
@@ -369,7 +396,7 @@
 @endsection
 
 @section('page-script')
-    <script src="{{ asset(mix('js/scripts/pickers/dateTime/pick-a-datetime.js')) }}"></script>
+<script src="{{ asset(mix('js/scripts/pickers/dateTime/pick-a-datetime.js')) }}"></script>
 <script>
     let surveyPricingDetails = [];
     const surveyPricing = $("#survey_pricing_details").val();
@@ -497,5 +524,34 @@
             console.log(result)
         })
     })
+
+
+
+
+
+
+    const baseUrl = window.location.protocol + "//" + window.location.host + "/";
+    let customerSurveyFiles = $('#customer_survey_files').val();
+    let survey_id = $('#survey_id').val();
+    if(customerSurveyFiles){
+        customerSurveyFiles = JSON.parse(customerSurveyFiles);
+    }
+    $.each(customerSurveyFiles, function(index, url) {
+        let buildUrl = baseUrl + 'customer_survey_files/'+survey_id+'_'+url;        
+        const filename = buildUrl.split('/').pop();
+        $('#customer_survey_area').append(
+          $('<p>').addClass('card-text').append(
+            $('<span>').text('Download Link: '),
+            $('<a>').attr({
+              href: buildUrl,
+              target: '_blank'
+            }).text(filename)
+          )
+        );
+      });
+
+
+
+
 </script>
 @endsection
