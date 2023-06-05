@@ -5,22 +5,13 @@ namespace App;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Survey extends Model
+class worker extends Model
 {
     use HasFactory;
     protected $fillable = [
-        "survey_id",
-        "name",
-        "address",
-        "email_address",
-        "mobile_number",
-        "survey_pricing_details",
-        "admin_survey_files",
-        "customer_survey_files",
-        "schedule_id",
-        "status",
+        "worker_name",
+        "position",
     ];
-
     // /**
     //  * @return array
     //  * @param array $data
@@ -31,16 +22,8 @@ class Survey extends Model
 
         $fields = [
             "id",
-            "survey_id",
-            "name",
-            "address",
-            "email_address",
-            "mobile_number",
-            "survey_pricing_details",
-            "admin_survey_files",
-            "customer_survey_files",
-            "schedule_id",
-            "status",
+            "worker_name",
+            "position",
         ];
 
         $amibiguous_fields = [
@@ -63,7 +46,6 @@ class Survey extends Model
 
     public function index(array $data): array
     {
-
         $returns = [];
         $items_per_page = @$data['items_per_page'];
         $pagination = @$data['pagination'];
@@ -124,26 +106,21 @@ class Survey extends Model
 
     private function applyFilters($query, $filters)
     {
-
         $iterationCount = 0;
         foreach ($filters as $key => $value) {
             $dataType = 'array';
             $filterType = 'like';
-            try {
-                if (is_object($value)) {
-                    $dataType = 'object';
-                    $find_value = $value->filter;
 
-                    $filterType = $value->filter_type ?? 'like';
+            if (is_object($value)) {
+                $dataType = 'object';
+                $find_value = $value->filter;
+                $filterType = $value->filter_type ?? 'like';
 
-                }
-                if (is_array($value)) {
-                    $dataType = 'array';
-                    $find_value = $value['filter'];
-                    $filterType = $value['filter_type'] ?? 'like';
-                }
-            } catch (\Throwable $th) {
-                //throw $th;
+            }
+            if (is_array($value)) {
+                $dataType = 'array';
+                $find_value = $value['filter'];
+                $filterType = $value['filter_type'] ?? 'like';
             }
 
             switch ($key) {
@@ -177,42 +154,29 @@ class Survey extends Model
                         }
                     });
                     break;
-                case 'updated_at';
                 case 'created_at';
-                    if ($key == 'created_at') {
-                      
-                        try {
-                            $from = $value->from;
-                            $to = $value->to;
+                    // try {
 
-                        } catch (\Throwable $th) {
-                            $from = $value['from'];
-                            $to = $value['to'];
-                        }
-
-                        // try {
-
-                        $from = date('Y-m-d', strtotime($from));
-                        $to = date('Y-m-d', strtotime($to));
+                    $from = date('Y-m-d', strtotime($find_value->from));
+                    $to = date('Y-m-d', strtotime($find_value->to));
+                    $from = $from . ' 00:00:00';
+                    $to = $to . ' 23:59:59';
+                    $query->whereBetween('created_at', [$from, $to]);
+                    // } catch (\Throwable $th) {
+                    //     // handle the error
+                    // }
+                    break;
+                case 'updated_at';
+                    try {
+                        $from = date('Y-m-d', strtotime($value->from));
+                        $to = date('Y-m-d', strtotime($value->to));
                         $from = $from . ' 00:00:00';
                         $to = $to . ' 23:59:59';
-                        $query->whereBetween('created_at', [$from, $to]);
-                        // } catch (\Throwable $th) {
-                        //     // handle the error
-                        // }
+                        $query->whereBetween('updated_at', [$from, $to]);
+                    } catch (\Throwable $th) {
+                        // handle the error
                     }
                     break;
-                // case 'updated_at';
-                //     try {
-                //         $from = date('Y-m-d', strtotime($value->from));
-                //         $to = date('Y-m-d', strtotime($value->to));
-                //         $from = $from . ' 00:00:00';
-                //         $to = $to . ' 23:59:59';
-                //         $query->whereBetween('updated_at', [$from, $to]);
-                //     } catch (\Throwable $th) {
-                //         // handle the error
-                //     }
-                //     break;
                 default:
                     if ($key == 'id' && !is_numeric($find_value)) {
                         $validate_search = 0;
@@ -227,7 +191,6 @@ class Survey extends Model
                                 break;
 
                             default:
-
                                 $query->where($key, 'LIKE', '%' . $find_value . '%');
 
                                 break;
@@ -250,9 +213,8 @@ class Survey extends Model
         $returns = [];
         $id = optional($request)->get('id', '');
         $fields = $this->fillable;
-
+   
         $submittedData = collect($request)->only($fields)->toArray();
-
         $execute = $this::create($submittedData)->id;
         $executeStatus = (is_integer($execute)) ? 1 : 0;
         $returns['status'] = $executeStatus;
@@ -372,6 +334,7 @@ class Survey extends Model
     // {
     //     return $this->db_table->getFillable();
     // }
+
     public function getUpdatedAtAttribute($value)
     {
         return date('Y-m-d h:i:s A', strtotime($value));

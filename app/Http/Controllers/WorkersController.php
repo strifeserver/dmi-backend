@@ -9,26 +9,22 @@ use App\Http\Controllers\Pagination\Paginatable;
 use App\Http\Requests\SurveyPostRequest;
 use App\Services\AuthService;
 use App\Services\PageService;
-use App\Services\ScheduleService;
-use App\Services\SurveyService;
+use App\Services\WorkerService;
 use App\Support\AgGrid;
-use App\Survey;
-use Helper;
+use App\Worker;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Storage;
 
-class SurveyController extends Controller implements Paginatable
+class WorkersController extends Controller implements Paginatable
 {
     use AcceptsPagination;
 
-    public function __construct(PageService $pageService, AuthService $authService, ScheduleService $ScheduleService, SurveyService $SurveyService, Survey $db_table)
+    public function __construct(Worker $db_table, PageService $pageService, authService $authService, WorkerService $WorkerService)
     {
         $this->db_table = $db_table;
         $this->pageService = $pageService;
         $this->authService = $authService;
-        $this->SurveyService = $SurveyService;
-        $this->ScheduleService = $ScheduleService;
+        $this->WorkerService = $WorkerService;
     }
 
     public function getColumns(): array
@@ -77,7 +73,7 @@ class SurveyController extends Controller implements Paginatable
 
     // DATA FILTERING AND PAGINATION
 
-    public function getPage(int $start, int $end, ?array $sortModel, ?object $filterModel): PageData
+    public function getPage(int $start, int $end,  ? array $sortModel,  ? object $filterModel) : PageData
     {
         $rows = $this->db_table->select()
             ->when($filterModel, function ($query, $filterModel) {
@@ -111,8 +107,8 @@ class SurveyController extends Controller implements Paginatable
         $accesslevel = $this->authService->crud_guards();
         $controller_res = [];
         #UPDATE ON EACH CONTROLLER YOU MAKE WITH TABLE
-        $controller_res['site_title'] = 'Survey';
-        $controller_res['folder_name'] = 'surveys';
+        $controller_res['site_title'] = 'Worker';
+        $controller_res['folder_name'] = 'workers';
         $controller_res['accesslevel'] = $accesslevel;
         #UPDATE ON EACH CONTROLLER YOU MAKE WITH TABLE
 
@@ -122,9 +118,8 @@ class SurveyController extends Controller implements Paginatable
     public function table_columns()
     {
         return [
-            ['table_name' => 'survey_id', 'headerName' => 'SURVEY ID', 'is_display' => true, 'column_width' => 'W_WIDE'],
-            ['table_name' => 'name', 'headerName' => 'NAME', 'is_display' => true, 'column_width' => 'W_WIDE'],
-            ['table_name' => 'email_address', 'headerName' => 'EMAIL ADDRESS', 'is_display' => true, 'column_width' => 'W_ULTRAWIDE'],
+            ['table_name' => 'worker_name', 'headerName' => 'WORKER NAME', 'is_display' => true, 'column_width' => 'W_WIDE'],
+            ['table_name' => 'position', 'headerName' => 'POSITION', 'is_display' => true, 'column_width' => 'W_WIDE'],
             ['table_name' => 'created_at', 'headerName' => 'DATE CREATED', 'is_display' => true, 'column_width' => 'W_WIDE'],
             ['table_name' => 'updated_at', 'headerName' => 'DATE UPDATED', 'is_display' => true, 'column_width' => 'W_WIDE'],
         ];
@@ -202,20 +197,20 @@ class SurveyController extends Controller implements Paginatable
     public function create()
     {
         $page_variables = $this->pageService->page_variables(['controller_variables' => $this->controller_variables(), 'mode' => 'Create']);
+
         return view($page_variables['create_page'], $page_variables);
     }
 
     public function store(SurveyPostRequest $request)
     {
         $page_variables = $this->pageService->page_variables(['controller_variables' => $this->controller_variables(), 'mode' => 'Create']);
-        $validated = $request->validated();
-        $execution = $this->SurveyService->store($validated);
+        $execution = $this->WorkerService->store($request->all());
 
         return redirect()
             ->route($page_variables['update_page'])
             ->with(
                 $execution['status'],
-                $page_variables['title'] . ' Created ' . $execution['message']
+                $page_variables['title'] . ' Created ' 
             );
     }
 
@@ -229,12 +224,11 @@ class SurveyController extends Controller implements Paginatable
         return view($page_variables['edit_page'], $page_variables);
     }
 
-    public function update(SurveyPostRequest $request)
+    public function update(request $request)
     {
         $page_variables = $this->pageService->page_variables(['controller_variables' => $this->controller_variables(), 'mode' => 'Update']);
-        $validated = $request->validated();
 
-        $execution = $this->SurveyService->update($validated);
+        $execution = $this->WorkerService->update($request->all());
         return redirect()
             ->route($page_variables['update_page'])
             ->with(
@@ -258,100 +252,6 @@ class SurveyController extends Controller implements Paginatable
             $return_msg = ['type' => 'error_comment', 'remarks' => 'Failed to Delete'];
         }
         return redirect()->route($page_variables['destroy_page'])->with($return_msg['type'], $return_msg['remarks']);
-    }
-
-    public function api_index()
-    {
-        $returns = [];
-        $modi_ret = [];
-        $execution = $this->SurveyService->index();
-
-        $returns = $execution;
-        $code = $returns['code'] ?? 400;
-        return response($returns, $code)->header('Content-Type', 'application/json');
-    }
-    public function scheduled_dates()
-    {
-        $returns = [];
-        $check_schedule_data = [
-            'display_fields_only' => ['date'],
-        ];
-        $check_schedule = $this->ScheduleService->index($check_schedule_data);
-
-        $returns = $check_schedule;
-        $code = $returns['code'] ?? 400;
-        return response($returns, $code)->header('Content-Type', 'application/json');
-    }
-
-    public function create_survey(Request $request)
-    {
-
-        $check_schedule_data = [
-            'filters' => ['date' => ['filter' => $request['requested_schedule'], 'type' => 'same_day']],
-        ];
-        $check_schedule = $this->ScheduleService->index($check_schedule_data);
-        if (!empty($check_schedule['result'])) {
-            $response = Helper::apiResponse('error', 400, 'Failed to create survey');
-
-        } else {
-
-            // create survey
-            $survey_id = $this->generateTicket();
-            $to_validate = [
-                'survey_id' => $survey_id,
-                'name' => request('name'),
-                'address' => request('address'),
-                'email_address' => request('email_address'),
-                'mobile_number' => request('mobile_number'),
-                'customer_survey_files' => $request->file('customer_survey_files'),
-            ];
-
-
-            $execution = $this->SurveyService->store($to_validate);
-
-            $to_validate = [
-                'survey_id' => $execution['result']['id'],
-                'requested_by' => request('name'),
-                'approved_by' => request('approved_by'),
-                'schedule_raw' => date(request('requested_schedule')),
-                'date' => date(request('requested_schedule')),
-                'customer_survey_files' => $request->file('customer_survey_files'),
-                'time' => null,
-                'status' => 1,
-            ];
-            $createSchedule = $this->ScheduleService->store($to_validate);
-
-            if ($execution['status'] == 'success' && $createSchedule['status'] == 'success') {
-                $response = Helper::apiResponse('success', 200, 'Survey Successfully Created', ['survey_id' => $survey_id, 'debug' => json_encode($check_schedule)]);
-            } else {
-                $response = Helper::apiResponse('error', 400, 'Failed to create survey');
-            }
-
-        }
-
-        return response()->json($response);
-    }
-
-    public function generateTicket($length = 10)
-    {
-        $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $ticket = '';
-        for ($i = 0; $i < $length; $i++) {
-            $index = rand(0, strlen($characters) - 1);
-            $ticket .= $characters[$index];
-        }
-        $ticket .= time(); // Add current timestamp to the end of the ticket
-        return $ticket;
-    }
-
-    public function track_survey(request $request)
-    {
-
-        $survey_id = $request['survey_id'];
-        $trackSurvey = $this->SurveyService->edit($survey_id);
-        $trackSurvey = (array) $trackSurvey;
-
-        return response()->json($trackSurvey);
     }
 
 }

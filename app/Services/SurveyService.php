@@ -7,6 +7,7 @@ use App\Services\AuditTrailService;
 use App\Services\ScheduleService;
 use App\Survey;
 use Illuminate\Support\Facades\Storage;
+
 class SurveyService
 {
 /**
@@ -24,21 +25,27 @@ class SurveyService
  * @param integer $id
  * @return array
  */
-    public function index(int $id): array
+    public function index($data): array
     {
-        $itemsPerPage = request('itemsPerPage', 10);
-        $filter = request('filter', []);
-        $pagination = request('pagination', 0);
 
+        $itemsPerPage = request('itemsPerPage', 10);
+        try {
+            $filter = @$data['filter'];
+
+        } catch (\Throwable $th) {
+            $filter = request('filter');
+        }
+        // $filter = @request('filter') ?? @$data['filter'];
+        $pagination = request('pagination', 0);
+      
         $data = [
             'pagination' => $pagination,
             'items_per_page' => $itemsPerPage,
             'filters' => $filter,
         ];
-
+        
         $execution = $this->repository->index($data);
         $response = $this->api_service->api_returns($execution);
-
         return $response;
     }
 
@@ -51,13 +58,16 @@ class SurveyService
 
         $customer_file_names = [];
         $customer_survey_files_upload = $request['customer_survey_files'];
-        foreach ($customer_survey_files_upload as $key => $value) {
-            $naming_convention = $request['survey_id'];
-            $new_file_name = $naming_convention.'_' . $value->getClientOriginalName();
-            $path = Storage::putFileAs('customer_survey_files', $value, $new_file_name);
-            $customer_file_names[] = $value->getClientOriginalName();
+        if ($customer_survey_files_upload) {
+            foreach ($customer_survey_files_upload as $key => $value) {
+                $naming_convention = $request['survey_id'];
+                $new_file_name = $naming_convention . '_' . $value->getClientOriginalName();
+                $path = Storage::putFileAs('customer_survey_files', $value, $new_file_name);
+                $customer_file_names[] = $value->getClientOriginalName();
+            }
+            $request['customer_survey_files'] = json_encode($customer_file_names);
+
         }
-        $request['customer_survey_files'] = json_encode($customer_file_names);
 
         $execution = $this->repository->store($request);
 
@@ -89,10 +99,10 @@ class SurveyService
             $customer_survey_files = $response['result']['customer_survey_files'];
             $customer_survey_files = json_decode($customer_survey_files);
             foreach ($customer_survey_files as $key => $value) {
-                $new_customer_survey_files[] = url('/').'/customer_survey_files/'.$response['result']['survey_id'].'_'.$value;
+                $new_customer_survey_files[] = url('/') . '/customer_survey_files/' . $response['result']['survey_id'] . '_' . $value;
             }
             $response['result']['customer_survey_files'] = $new_customer_survey_files;
-      
+
         }
 
         return $response;
@@ -141,7 +151,9 @@ class SurveyService
     {
         $formatted = [];
         foreach ($find as $key => $value) {
+            $switchKey = key($value);
             $formatted[key($value)] = ['filter' => current($value)];
+
         }
 
         $data = ['filters' => json_encode($formatted)];
@@ -151,6 +163,26 @@ class SurveyService
 
         $response = $this->api_service->api_returns($execution);
         return $response;
+    }
+
+    public function analyticsFilterDates($request)
+    {
+        $selectedOption = $request;
+        $to = date('Y-m-d');
+
+        $options = [
+            date('Y-m-d', strtotime('-7 days')),
+            date('Y-m-d', strtotime('-28 days')),
+            date('Y-m-d', strtotime('-60 days')),
+            date('Y-m-d', strtotime('-360 days')),
+        ];
+        # 0 - last 7 days
+        # 1 - last 28 days
+        # 2 - last month
+        # 3 - last year
+        $from = $options[$selectedOption];
+
+        return ['from' => $from, 'to' => $to];
     }
 
 }

@@ -7,54 +7,89 @@
     Author URL: http://www.themeforest.net/user/pixinvent
 ==========================================================================================*/
 
-document.addEventListener('DOMContentLoaded', function () {
-
+document.addEventListener("DOMContentLoaded", function () {
   // color object for different event types
   var colors = {
     primary: "#7367f0",
     success: "#28c76f",
     danger: "#ea5455",
-    warning: "#ff9f43"
+    warning: "#ff9f43",
   };
 
   // chip text object for different event types
   var categoryText = {
-    primary: "Others",
-    success: "Business",
-    danger: "Personal",
-    warning: "Work"
+    primary: "Others/Initial Appointment",
+    success: "Finished",
+    danger: "Rejected",
+    warning: "Pending",
   };
   var categoryBullets = $(".cal-category-bullets").html(),
     evtColor = "",
     eventColor = "";
 
   // calendar init
-  var calendarEl = document.getElementById('fc-default');
+  var calendarEl = document.getElementById("fc-default");
 
   var calendar = new FullCalendar.Calendar(calendarEl, {
+    events: function (info, successCallback, failureCallback) {
+      $.ajax({
+        url: "http://127.0.0.1:8000/schedules",
+        dataType: "json",
+        success: function (response) {
+          var events = response.result.map(function (schedule) {
+            return {
+              survey_id: schedule.survey_id,
+              title: schedule.schedule_title,
+              start: schedule.start_date,
+              end: schedule.end_date,
+              className: schedule.classes,
+              description: schedule.description,
+              // url: 'http://127.0.0.1:8000/surveys/1/edit',
+            };
+          });
+          successCallback(events);
+        },
+        error: function () {
+          failureCallback();
+        },
+      });
+    },
+
+    // events: [
+    //   {
+    //     title: "event1",
+    //     start: "2023-05-05",
+    //     end: "2023-05-05",
+    //     // color: '#28c76f',
+    //     className:'chip-success',
+
+    //   },
+    // ],
+
     plugins: ["dayGrid", "timeGrid", "interaction"],
     customButtons: {
       addNew: {
-        text: ' Add',
+        text: " Add",
         click: function () {
-          var calDate = new Date,
+          var calDate = new Date(),
             todaysDate = calDate.toISOString().slice(0, 10);
           $(".modal-calendar").modal("show");
           $(".modal-calendar .cal-submit-event").addClass("d-none");
           $(".modal-calendar .remove-event").addClass("d-none");
-          $(".modal-calendar .cal-add-event").removeClass("d-none")
-          $(".modal-calendar .cancel-event").removeClass("d-none")
+          $(".modal-calendar .cal-add-event").removeClass("d-none");
+          $(".modal-calendar .cancel-event").removeClass("d-none");
           $(".modal-calendar .add-category .chip").remove();
           $("#cal-start-date").val(todaysDate);
           $("#cal-end-date").val(todaysDate);
           $(".modal-calendar #cal-start-date").attr("disabled", false);
-        }
-      }
+        },
+      },
     },
     header: {
       left: "addNew",
-      center: "dayGridMonth,timeGridWeek,timeGridDay",
-      right: "prev,title,next"
+      // center: "dayGridMonth,timeGridWeek,timeGridDay",
+      center: "dayGridMonth",
+      right: "prev,title,next",
     },
     displayEventTime: false,
     navLinks: true,
@@ -64,29 +99,69 @@ document.addEventListener('DOMContentLoaded', function () {
       $(".modal-calendar").modal("show");
     },
     dateClick: function (info) {
-      $(".modal-calendar #cal-start-date").val(info.dateStr).attr("disabled", true);
+      $(".modal-calendar #cal-start-date")
+        .val(info.dateStr)
+        .attr("disabled", true);
       $(".modal-calendar #cal-end-date").val(info.dateStr);
     },
     // displays saved event values on click
     eventClick: function (info) {
+      var textcolor = "Others/Appointment";
+      if (info.event.classNames[0] == "chip-blue") {
+        textcolor = "Others/Appointment";
+      }
+      if (info.event.classNames[0] == "chip-warning") {
+        textcolor = "Pending";
+      }
+      if (info.event.classNames[0] == "chip-danger") {
+        textcolor = "Rejected";
+      }
+      if (info.event.classNames[0] == "chip-success") {
+        textcolor = "Finished";
+      }
+      console.log(info.event);
       $(".modal-calendar").modal("show");
       $(".modal-calendar #cal-event-title").val(info.event.title);
-      $(".modal-calendar #cal-start-date").val(moment(info.event.start).format('YYYY-MM-DD'));
-      $(".modal-calendar #cal-end-date").val(moment(info.event.end).format('YYYY-MM-DD'));
-      $(".modal-calendar #cal-description").val(info.event.extendedProps.description);
+      $(".modal-calendar #cal-start-date").val(
+        moment(info.event.start).format("YYYY-MM-DD")
+      );
+      if (!info.event.end) {
+        $(".modal-calendar #cal-end-date").val(
+          moment(info.event.start).format("YYYY-MM-DD")
+        );
+      } else {
+        $(".modal-calendar #cal-end-date").val(
+          moment(info.event.end).format("YYYY-MM-DD")
+        );
+      }
+
+      $(".modal-calendar #cal-description").val(
+        info.event.extendedProps.description
+      );
       $(".modal-calendar .cal-submit-event").removeClass("d-none");
       $(".modal-calendar .remove-event").removeClass("d-none");
       $(".modal-calendar .cal-add-event").addClass("d-none");
       $(".modal-calendar .cancel-event").addClass("d-none");
-      $(".calendar-dropdown .dropdown-menu").find(".selected").removeClass("selected");
+      $(".calendar-dropdown .dropdown-menu")
+        .find(".selected")
+        .removeClass("selected");
+      console.log(info.event.classNames[0]);
       var eventCategory = info.event.extendedProps.dataEventColor;
-      var eventText = categoryText[eventCategory]
+      var eventText = categoryText[eventCategory];
       $(".modal-calendar .chip-wrapper .chip").remove();
-      $(".modal-calendar .chip-wrapper").append($("<div class='chip chip-" + eventCategory + "'>" +
-        "<div class='chip-body'>" +
-        "<span class='chip-text'> " + eventText + " </span>" +
-        "</div>" +
-        "</div>"));
+      $(".modal-calendar .chip-wrapper").append(
+        $(
+          "<div class='chip " +
+            info.event.classNames[0] +
+            "'>" +
+            "<div class='chip-body'>" +
+            "<span class='chip-text'> " +
+            textcolor +
+            " </span>" +
+            "</div>" +
+            "</div>"
+        )
+      );
     },
   });
 
@@ -103,24 +178,22 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Remove Event
   $(".remove-event").on("click", function () {
-    var removeEvent = calendar.getEventById('newEvent');
+    var removeEvent = calendar.getEventById("newEvent");
     removeEvent.remove();
   });
 
-
   // reset input element's value for new event
   if ($("td:not(.fc-event-container)").length > 0) {
-    $(".modal-calendar").on('hidden.bs.modal', function (e) {
-      $('.modal-calendar .form-control').val('');
-    })
+    $(".modal-calendar").on("hidden.bs.modal", function (e) {
+      $(".modal-calendar .form-control").val("");
+    });
   }
 
   // remove disabled attr from button after entering info
   $(".modal-calendar .form-control").on("keyup", function () {
     if ($(".modal-calendar #cal-event-title").val().length >= 1) {
       $(".modal-calendar .modal-footer .btn").removeAttr("disabled");
-    }
-    else {
+    } else {
       $(".modal-calendar .modal-footer .btn").attr("disabled", true);
     }
   });
@@ -128,7 +201,9 @@ document.addEventListener('DOMContentLoaded', function () {
   // open add event modal on click of day
   $(document).on("click", ".fc-day", function () {
     $(".modal-calendar").modal("show");
-    $(".calendar-dropdown .dropdown-menu").find(".selected").removeClass("selected");
+    $(".calendar-dropdown .dropdown-menu")
+      .find(".selected")
+      .removeClass("selected");
     $(".modal-calendar .cal-submit-event").addClass("d-none");
     $(".modal-calendar .remove-event").addClass("d-none");
     $(".modal-calendar .cal-add-event").removeClass("d-none");
@@ -140,32 +215,45 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   // change chip's and event's color according to event type
-  $(".calendar-dropdown .dropdown-menu .dropdown-item").on("click", function () {
-    var selectedColor = $(this).data("color");
-    evtColor = colors[selectedColor];
-    eventTag = categoryText[selectedColor];
-    eventColor = selectedColor;
+  $(".calendar-dropdown .dropdown-menu .dropdown-item").on(
+    "click",
+    function () {
+      var selectedColor = $(this).data("color");
+      evtColor = colors[selectedColor];
+      eventTag = categoryText[selectedColor];
+      eventColor = selectedColor;
 
-    // changes event color after selecting category
-    $(".cal-add-event").on("click", function () {
-      calendar.addEvent({
-        color: evtColor,
-        dataEventColor: eventColor,
-        className: eventColor
+      // changes event color after selecting category
+      $(".cal-add-event").on("click", function () {
+        calendar.addEvent({
+          color: evtColor,
+          dataEventColor: eventColor,
+          className: eventColor,
+        });
       });
-    })
 
-    $(".calendar-dropdown .dropdown-menu").find(".selected").removeClass("selected");
-    $(this).addClass("selected");
+      $(".calendar-dropdown .dropdown-menu")
+        .find(".selected")
+        .removeClass("selected");
+      $(this).addClass("selected");
 
-    // add chip according to category
-    $(".modal-calendar .chip-wrapper .chip").remove();
-    $(".modal-calendar .chip-wrapper").append($("<div class='chip chip-" + selectedColor + "'>" +
-      "<div class='chip-body'>" +
-      "<span class='chip-text'> " + eventTag + " </span>" +
-      "</div>" +
-      "</div>"));
-  });
+      // add chip according to category
+      $(".modal-calendar .chip-wrapper .chip").remove();
+      $(".modal-calendar .chip-wrapper").append(
+        $(
+          "<div class='chip chip-" +
+            selectedColor +
+            "'>" +
+            "<div class='chip-body'>" +
+            "<span class='chip-text'> " +
+            eventTag +
+            " </span>" +
+            "</div>" +
+            "</div>"
+        )
+      );
+    }
+  );
 
   // calendar add event
   $(".cal-add-event").on("click", function () {
@@ -183,12 +271,12 @@ document.addEventListener('DOMContentLoaded', function () {
       description: eventDescription,
       color: evtColor,
       dataEventColor: eventColor,
-      allDay: true
+      allDay: true,
     });
   });
 
   // date picker
   $(".pickadate").pickadate({
-    format: 'yyyy-mm-dd'
+    format: "yyyy-mm-dd",
   });
 });

@@ -67,9 +67,9 @@ class CoreNavigationsSeeder extends Seeder
                 ]
             ],
 
-            [
-                'main' => [ 'Calendar', 'calendars', 'CoreCalendars', 'feather icon-home','1','single'],
-            ],
+            // [
+            //     'main' => [ 'Calendar', 'calendars', 'CoreCalendars', 'feather icon-home','1','single'],
+            // ],
 
             [
                 'main' => [ 'Maintenance', '', '', 'feather icon-settings','1','main'],
@@ -78,6 +78,7 @@ class CoreNavigationsSeeder extends Seeder
                     [ 'Content', 'content_management', 'ContentManagement', 'feather icon-circle','1','sub'],
                     [ 'Survey', 'surveys', 'Survey', 'feather icon-circle','1','sub'],
                     [ 'Transactions', 'transactions', 'Transactions', 'feather icon-circle','1','sub'],
+                    [ 'Workers', 'workers', 'Workers', 'feather icon-circle','1','sub'],
                 ]
             ],
             [

@@ -1765,6 +1765,15 @@ input:focus ~ .bg-primary {
   color: #fff !important;
 }
 
+
+.chip-blue {
+  background-color: #0090c5a4 !important;
+}
+
+.chip-blue .chip-body {
+  color: #fff !important;
+}
+
 .divider.divider-primary .divider-text:before,
 .divider.divider-primary .divider-text:after {
   border-color: #7367f0 !important;
@@ -3881,6 +3890,9 @@ input:focus ~ .bg-success {
 
 .bullet.bullet-success {
   background-color: #28c76f;
+}
+.bullet.bullet-blue {
+  background-color: #0090c5a4;
 }
 
 .pagination-success .page-item.active .page-link {

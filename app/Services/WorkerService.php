@@ -2,20 +2,19 @@
 
 namespace App\Services;
 
-use App\ScheduleList;
 use App\Services\ApiService;
 use App\Services\AuditTrailService;
-use App\Services\SurveyService;
-use Helper;
+use App\Services\ScheduleService;
+use App\worker;
 
-class ScheduleService
+class WorkerService
 {
 /**
- * @param ScheduleList $repository
+ * @param worker $repository
  * @param ApiService $api_service
  * @param AuditTrailService $audit_service
  */
-    public function __construct(ScheduleList $repository, ApiService $api_service)
+    public function __construct(worker $repository, ApiService $api_service)
     {
         $this->repository = $repository;
         $this->api_service = $api_service;
@@ -25,22 +24,20 @@ class ScheduleService
  * @param integer $id
  * @return array
  */
-    public function index($paramData): array
+    public function index($data): array
     {
 
         $itemsPerPage = request('itemsPerPage', 10);
-        $filter = @$paramData['filters'] ?? request('filter', []);
+        $filter = @request('filter') ?? @$data['filter'];
         $pagination = request('pagination', 0);
-        $display_fields_only = $paramData['display_fields_only'] ?? null;
 
         $data = [
             'pagination' => $pagination,
             'items_per_page' => $itemsPerPage,
             'filters' => $filter,
-            'display_fields_only' => $display_fields_only,
         ];
         $execution = $this->repository->index($data);
-        $response = Helper::apiResponse($execution['status'], 200, null, $execution['data']);
+        $response = $this->api_service->api_returns($execution);
         return $response;
     }
 
@@ -48,27 +45,17 @@ class ScheduleService
  * @param array $request
  * @return array
  */
-    public function store(array $request): array
+    public function store(array $request)
     {
-        if (!empty($request['survey_id'])) {
-            if (!is_int($request['survey_id'])) {
-                $SurveyService = app(SurveyService::class);
-                $indexParams = ['filter' => json_encode(['survey_id' => ['filter' => $request['survey_id']]])];
-                $surveySearch = $SurveyService->index($indexParams);
-                if (!empty($surveySearch['result'])) {
-                    $request['survey_id'] = $surveySearch['result'][0]['id'];
-                }
-            }
-        }
-  
-        $execution = $this->repository->execute_store($request);
+   
+        $execution = $this->repository->store($request);
 
         if ($execution['status'] === 1) {
             $audit_data = ['incoming_data' => $request];
+            // $this->audit_service->store($audit_data);
         }
 
         $response = $this->api_service->api_returns($execution);
-
         return $response;
     }
 
@@ -76,11 +63,12 @@ class ScheduleService
  * @param integer $Id
  * @return array
  */
-    public function edit(int $Id): array
+    public function edit($Id): array
     {
+
         $execution = $this->repository->edit($Id);
         $response = $this->api_service->api_returns($execution);
-
+        $ScheduleService = app(ScheduleService::class);
         return $response;
     }
 
@@ -127,7 +115,9 @@ class ScheduleService
     {
         $formatted = [];
         foreach ($find as $key => $value) {
+            $switchKey = key($value);
             $formatted[key($value)] = ['filter' => current($value)];
+
         }
 
         $data = ['filters' => json_encode($formatted)];

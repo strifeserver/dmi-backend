@@ -148,7 +148,7 @@
                                                 <div class="col-md-8">
                                                     <div class="position-relative has-icon-left">
 
-                                                        <input id="schedule_info" readonly type="text"
+                                                        <input id="schedule_info"  type="text"
                                                             class="form-control @error('schedule_info') is-invalid @enderror"
                                                             name="schedule_info"
                                                             value="{{ $mode == 'Update' ? @$edit->schedule_info : old('schedule_info') }}"
@@ -391,6 +391,8 @@
     <script src="{{ asset(mix('vendors/js/pickers/pickadate/picker.time.js')) }}"></script>
     <script src="{{ asset(mix('vendors/js/pickers/pickadate/legacy.js')) }}"></script>
     <script src="{{ asset(mix('vendors/js/extensions/sweetalert2.all.min.js')) }}"></script>
+
+    
 @endsection
 
 @endsection

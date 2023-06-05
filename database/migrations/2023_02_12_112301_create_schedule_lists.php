@@ -16,11 +16,16 @@ class CreateScheduleLists extends Migration
         Schema::create('schedule_lists', function (Blueprint $table) {
             $table->id();
             $table->integer('survey_id')->nullable();
+            $table->string('schedule_title')->nullable();
             $table->text('requested_by')->nullable();
             $table->text('approved_by')->nullable();
             $table->dateTime('schedule_raw')->nullable();
             $table->string('date')->nullable();
+            $table->string('end_date')->nullable();
             $table->string('time')->nullable();
+            $table->string('schedule_type')->default('appointment');
+            $table->string('classes')->default('chip-blue');
+            $table->text('description')->nullable();
             $table->integer('status')->default(0);
             $table->timestamps();
         });

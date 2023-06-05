@@ -50,6 +50,7 @@ Route::group(['middleware'=>['customChecker']],function(){
 	Route::post('/users/update_my_account', 'UsersController@update_my_account');
 
 	Route::get('/', 'CoreDashboardsController@index');
+	Route::get('/schedules', 'CoreDashboardsController@schedules');
 });
 
 Route::get('/session-check', function() {
@@ -130,3 +131,6 @@ Route::put('/submit_account_settings', 'AccountSettingsController@index')->name(
 Route::get('/auth-reset-password', 'AuthenticationController@reset_password');
 // CONTROLLERS WHERE IT DOESNT REQUIRE LOG IN
 
+Route::get('/filter_analytics', 'CoreDashboardsController@filterAnalytics');
+Route::post('/schedule_insert', 'CoreDashboardsController@scheduleInsert');
+// Route::get('/filter_analytics', 'CoreDashboardsController@filterAnalytics');

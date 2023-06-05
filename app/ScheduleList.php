@@ -10,11 +10,16 @@ class ScheduleList extends Model
     use HasFactory;
     protected $fillable = [
         "survey_id",
+        "schedule_title",
+        "classes",
+        "schedule_type",
         "requested_by",
         "approved_by",
         "schedule_raw",
         "date",
+        "end_date",
         "time",
+        "description",
         "status",
     ];
 
@@ -26,8 +31,7 @@ class ScheduleList extends Model
         $filter = is_string($data['filters']) ? json_decode($data['filters'], true) ?? [] : $data['filters'] ?? [];
         $sort = @json_decode($data['sort'], true) ?? [];
         $display_fields_only = $data['display_fields_only'] ?? false;
-        // print_r($display_fields_only);
-        // exit;
+
         #default newest_to_oldest
         if (empty($sort) || empty($sort['created_at'])) {
             $sort['created_at'] = ['sort_by' => 'descending'];
@@ -39,13 +43,12 @@ class ScheduleList extends Model
         if (!empty($selected_fields)) {
             $fields = $selected_fields;
         }
-        if($display_fields_only){
+        if ($display_fields_only) {
             $fields = $display_fields_only;
         }
 
-
         $query = $this->select($fields);
-  
+
         if (!empty($filter)) {
             $query = $this->applyFilters($query, $filter);
         }
@@ -66,10 +69,10 @@ class ScheduleList extends Model
             $returns['status'] = 0;
             $returns['error_message'] = $th->getMessage();
         }
-        
+
         return $returns;
     }
-    
+
     private function applySorting($query, $sortModel)
     {
         foreach ($sortModel as $key => $value) {
@@ -142,7 +145,7 @@ class ScheduleList extends Model
                             $key = $field_values;
                         }
                     }
-         
+
                     $query->where($key, 'LIKE', '%' . ($value->filter ?? $value['filter'] ?? '') . '%');
 
                     break;
@@ -159,7 +162,12 @@ class ScheduleList extends Model
             "approved_by",
             "schedule_raw",
             "date",
+            "date as start_date",
+            "end_date",
             "time",
+            "schedule_title",
+            "classes",
+            "description",
             "status",
             "created_at",
             "updated_at",
@@ -188,16 +196,48 @@ class ScheduleList extends Model
         $returns = [];
         $id = optional($request)->get('id', '');
         $fields = $this->fillable;
-    
+
         $submittedData = collect($request)->only($fields)->toArray();
         $execute = $this::create($submittedData)->id;
 
         $executeStatus = (is_integer($execute)) ? 1 : 0;
         $returns['status'] = $executeStatus;
         $returns['data_id'] = $execute;
-     
+
         return $returns;
     }
 
+    public function getScheduleTitleAttribute($value)
+    {
+        if (!$value) {
+            switch ($this->classes) {
+                case 'chip chip-danger':
+                    # code...
+                    $value = 'Rejected';
+                    break;
+                case 'chip chip-success':
+                    $value = 'Success';
 
+                    # code...
+                    break;
+                case 'chip chip-warning':
+                    $value = 'Pending';
+                    break;
+
+                default:
+                    $value = 'Others/Appointments';
+
+                    break;
+            }
+        }
+        return $value;
+    }
+    public function getUpdatedAtAttribute($value)
+    {
+        return date('Y-m-d h:i:s A', strtotime($value));
+    }
+    public function getCreatedAtAttribute($value)
+    {
+        return date('Y-m-d h:i:s A', strtotime($value));
+    }
 }

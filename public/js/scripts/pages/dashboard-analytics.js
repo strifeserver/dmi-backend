@@ -25,71 +25,71 @@ $(window).on("load", function () {
   // Subscribers Gained Chart starts //
   // ----------------------------------
 
-  var gainedChartoptions = {
-    chart: {
-      height: 100,
-      type: 'area',
-      toolbar: {
-        show: false,
-      },
-      sparkline: {
-        enabled: true
-      },
-      grid: {
-        show: false,
-        padding: {
-          left: 0,
-          right: 0
-        }
-      },
-    },
-    colors: [$primary],
-    dataLabels: {
-      enabled: false
-    },
-    stroke: {
-      curve: 'smooth',
-      width: 2.5
-    },
-    fill: {
-      type: 'gradient',
-      gradient: {
-        shadeIntensity: 0.9,
-        opacityFrom: 0.7,
-        opacityTo: 0.5,
-        stops: [0, 80, 100]
-      }
-    },
-    series: [{
-      name: 'Subscribers',
-      data: [28, 40, 36, 52, 38, 60, 55]
-    }],
+  // var gainedChartoptions = {
+  //   chart: {
+  //     height: 100,
+  //     type: 'area',
+  //     toolbar: {
+  //       show: false,
+  //     },
+  //     sparkline: {
+  //       enabled: true
+  //     },
+  //     grid: {
+  //       show: false,
+  //       padding: {
+  //         left: 0,
+  //         right: 0
+  //       }
+  //     },
+  //   },
+  //   colors: [$primary],
+  //   dataLabels: {
+  //     enabled: false
+  //   },
+  //   stroke: {
+  //     curve: 'smooth',
+  //     width: 2.5
+  //   },
+  //   fill: {
+  //     type: 'gradient',
+  //     gradient: {
+  //       shadeIntensity: 0.9,
+  //       opacityFrom: 0.7,
+  //       opacityTo: 0.5,
+  //       stops: [0, 80, 100]
+  //     }
+  //   },
+  //   series: [{
+  //     name: 'Subscribers',
+  //     data: [28, 40, 36, 52, 38, 60, 55]
+  //   }],
 
-    xaxis: {
-      labels: {
-        show: false,
-      },
-      axisBorder: {
-        show: false,
-      }
-    },
-    yaxis: [{
-      y: 0,
-      offsetX: 0,
-      offsetY: 0,
-      padding: { left: 0, right: 0 },
-    }],
-    tooltip: {
-      x: { show: false }
-    },
-  }
+  //   xaxis: {
+  //     labels: {
+  //       show: false,
+  //     },
+  //     axisBorder: {
+  //       show: false,
+  //     }
+  //   },
+  //   yaxis: [{
+  //     y: 0,
+  //     offsetX: 0,
+  //     offsetY: 0,
+  //     padding: { left: 0, right: 0 },
+  //   }],
+  //   tooltip: {
+  //     x: { show: false }
+  //   },
+  // }
 
-  var gainedChart = new ApexCharts(
-    document.querySelector("#subscribe-gain-chart"),
-    gainedChartoptions
-  );
+  // var gainedChart = new ApexCharts(
+  //   document.querySelector("#subscribe-gain-chart"),
+  //   gainedChartoptions
+  // );
 
-  gainedChart.render();
+  // // gainedChart.render();
 
   // Subscribers Gained Chart ends //
 
@@ -162,7 +162,7 @@ $(window).on("load", function () {
     orderChartoptions
   );
 
-  orderChart.render();
+  // orderChart.render();
 
   // Orders Received Chart ends //
 
@@ -216,7 +216,7 @@ $(window).on("load", function () {
     sessionChartoptions
   );
 
-  sessionChart.render();
+  // sessionChart.render();
 
   // Avg Session Chart ends //
 
@@ -287,7 +287,13 @@ $(window).on("load", function () {
 
   // Product Order Chart starts
   // -----------------------------
-
+  const  finishedSurveyCount = $('#finishedSurveyCount').val();
+  const  pendingSurveyCount = $('#pendingSurveyCount').val();
+  const  rejectedSurveyCount = $('#rejectedSurveyCount').val();
+  const  totalSurveyCount = $('#totalSurveyCount').val();
+  const  finishedSurveyPercentage = $('#finishedSurveyPercentage').val();
+  const  pendingSurveyPercentage = $('#pendingSurveyPercentage').val();
+  const  rejectedSurveyPercentage = $('#rejectedSurveyPercentage').val();
   var productChartoptions = {
     chart: {
       height: 325,
@@ -334,13 +340,13 @@ $(window).on("load", function () {
 
             formatter: function (w) {
               // By default this function returns the average of all series. The below is just an example to show the use of custom formatter function
-              return 42459
+              return totalSurveyCount
             }
           }
         }
       }
     },
-    series: [70, 52, 26],
+    series: [finishedSurveyPercentage, pendingSurveyPercentage, rejectedSurveyPercentage],
     labels: ['Finished', 'Pending', 'Rejected'],
 
   }
@@ -433,12 +439,12 @@ $(window).on("load", function () {
 
   }
 
-  var salesChart = new ApexCharts(
-    document.querySelector("#sales-chart"),
-    salesChartoptions
-  );
+  // var salesChart = new ApexCharts(
+  //   document.querySelector("#sales-chart"),
+  //   salesChartoptions
+  // );
 
-  salesChart.render();
+  // salesChart.render();
 
   // Sales Chart ends //
 
