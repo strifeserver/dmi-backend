@@ -37,6 +37,7 @@ document.addEventListener("DOMContentLoaded", function () {
         dataType: "json",
         success: function (response) {
           var events = response.result.map(function (schedule) {
+            console.log(schedule.classes)
             return {
               survey_id: schedule.survey_id,
               title: schedule.schedule_title,

@@ -193,6 +193,7 @@ class ScheduleList extends Model
 
     public function execute_store($request): array
     {
+
         $returns = [];
         $id = optional($request)->get('id', '');
         $fields = $this->fillable;
