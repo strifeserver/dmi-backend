@@ -97,11 +97,16 @@ class SurveyService
             $new_customer_survey_files = [];
             $response['result']['schedule'] = $fetchSchedule['result'][0]['date'];
             $customer_survey_files = $response['result']['customer_survey_files'];
-            $customer_survey_files = json_decode($customer_survey_files);
-            foreach ($customer_survey_files as $key => $value) {
-                $new_customer_survey_files[] = url('/') . '/customer_survey_files/' . $response['result']['survey_id'] . '_' . $value;
+            try {
+                //code...
+                $customer_survey_files = json_decode($customer_survey_files);
+                foreach ($customer_survey_files as $key => $value) {
+                    $new_customer_survey_files[] = url('/') . '/customer_survey_files/' . $response['result']['survey_id'] . '_' . $value;
+                }
+                $response['result']['customer_survey_files'] = $new_customer_survey_files;
+            } catch (\Throwable $th) {
+                //throw $th;
             }
-            $response['result']['customer_survey_files'] = $new_customer_survey_files;
 
         }
 
