@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", function () {
         success: function (response) {
           var events = response.result.map(function (schedule) {
             return {
-              schedule_id: schedule.id,
+              schedule_id: schedule.survey_code,
               id: schedule.survey_code,
               survey_id: schedule.survey_id,
               title: schedule.schedule_title,
@@ -165,7 +165,6 @@ document.addEventListener("DOMContentLoaded", function () {
       var eventCategory = info.event.extendedProps.dataEventColor;
       var eventText = categoryText[eventCategory];
       $(".modal-calendar .chip-wrapper .chip").remove();
-      $("#schedule_id").val(info.event._def.extendedProps.schedule_id);
       $(".modal-calendar .chip-wrapper").append(
         $(
           "<div class='chip " +
@@ -195,7 +194,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const start_date = $("#cal-start-date").val();
     const end_date = $("#cal-end-date").val();
     const description = $("#cal-description").val();
-    const schedule_id = $("#schedule_id").val();
     var chipElement = $(".chip-wrapper").find(".chip");
     var chipClass = chipElement.attr("class");
     // console.log('---------')
@@ -203,7 +201,6 @@ document.addEventListener("DOMContentLoaded", function () {
     // return false;
     // Create an object to hold the data
     const requestData = {
-      id: schedule_id,
       survey_id: survey_id_list,
       schedule_title: event_title,
       date: start_date,
@@ -212,7 +209,8 @@ document.addEventListener("DOMContentLoaded", function () {
       classes: chipClass,
       schedule_type: "scheduled",
     };
-
+    console.log(requestData);
+    return false;
     // Retrieve CSRF token value from the page meta tag
     const csrfToken = $('meta[name="csrf-token"]').attr("content");
 
@@ -231,7 +229,6 @@ document.addEventListener("DOMContentLoaded", function () {
       success: function (response) {
         // Process the API response
         console.log(response);
-        location.reload();
       },
       error: function (xhr, status, error) {
         console.log(xhr);
@@ -243,7 +240,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     $(".modal-calendar").modal("hide");
-    // $('#dashboard-analytics').load(location.href + ' #dashboard-analytics');
   });
 
   // Remove Event
@@ -259,12 +255,12 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
   $(".modal-calendar .modal-footer .btn").removeAttr("disabled");
-
   // remove disabled attr from button after entering info
   $(".modal-calendar .form-control").on("keyup", function () {
-    console.log("sdsd");
     if ($(".modal-calendar #cal-event-title").val().length >= 1) {
+      $(".modal-calendar .modal-footer .btn").removeAttr("disabled");
     } else {
+      // $(".modal-calendar .modal-footer .btn").attr("disabled", true);
     }
   });
 

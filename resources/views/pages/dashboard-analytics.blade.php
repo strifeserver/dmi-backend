@@ -625,7 +625,7 @@
     <script>
         $(document).ready(function() {
         $('#add_schedule').click(function() {
-
+            $(".modal-calendar .modal-footer .btn").removeAttr("disabled");
             const survey_id_list = $('#survey-id-list').val();
             const event_title = $('#cal-event-title').val();
             const start_date = $('#cal-start-date').val();
