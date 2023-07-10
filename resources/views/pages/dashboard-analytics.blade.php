@@ -666,6 +666,7 @@
                 success: function(response) {
                     // Process the API response
                     console.log(response);
+                    location.reload();
                 },
                 error: function(xhr, status, error) {
                     console.log(xhr);
