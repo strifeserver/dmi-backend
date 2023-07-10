@@ -231,6 +231,7 @@ document.addEventListener("DOMContentLoaded", function () {
       success: function (response) {
         // Process the API response
         console.log(response);
+        location.reload();
       },
       error: function (xhr, status, error) {
         console.log(xhr);
@@ -242,7 +243,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     $(".modal-calendar").modal("hide");
-    location.reload();
     // $('#dashboard-analytics').load(location.href + ' #dashboard-analytics');
   });
 
@@ -262,7 +262,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // remove disabled attr from button after entering info
   $(".modal-calendar .form-control").on("keyup", function () {
-    console.log('sdsd')
+    console.log("sdsd");
     if ($(".modal-calendar #cal-event-title").val().length >= 1) {
     } else {
     }

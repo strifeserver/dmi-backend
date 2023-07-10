@@ -180,7 +180,7 @@ class Survey extends Model
                 case 'updated_at';
                 case 'created_at';
                     if ($key == 'created_at') {
-                      
+
                         try {
                             $from = $value->from;
                             $to = $value->to;
@@ -318,6 +318,7 @@ class Survey extends Model
 
         $data = $this->where('id', $id)->first();
         $request = collect($request);
+
         if ($data) {
             $submittedData = $request->only($fields);
             $beforeUpdate = $data->toArray();

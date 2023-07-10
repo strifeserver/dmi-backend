@@ -411,6 +411,7 @@
         var $danger = '#EA5455';
         var $warning = '#FF9F43';
         var $info = '#0DCCE1';
+        var $sucess = '#28c76f';
         var $primary_light = '#8F80F9';
         var $warning_light = '#FFC085';
         var $danger_light = '#f29292';
@@ -500,15 +501,16 @@
                     height: 325,
                     type: 'radialBar',
                 },
-                colors: [$primary, $warning, $danger],
+                colors: [$sucess, $warning, $danger],
                 fill: {
-                    type: 'gradient',
+                    type: 'solid',
                     gradient: {
                         // enabled: true,
                         shade: 'dark',
                         type: 'vertical',
                         shadeIntensity: 0.5,
-                        gradientToColors: [$primary_light, $warning_light, $danger_light],
+                        // gradientToColors: [$primary_light, $warning_light, $danger_light],
+                        gradientToColors: [$sucess],
                         inverseColors: false,
                         opacityFrom: 1,
                         opacityTo: 1,

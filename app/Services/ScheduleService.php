@@ -103,24 +103,23 @@ class ScheduleService
                     $structure = [
                         'id' => $surveySearch['id'],
                     ];
-
+                 
                     switch ($request['classes']) {
-                        case 'chip+chip-success':
+                        case 'chip chip-success':
                             $structure = [
                                 'id' => $surveySearch['id'],
                                 'status' => 'finished',
                             ];
                             $SurveyUpdate = $SurveyService->update($structure);
-
                             break;
-                        case 'chip+chip-warning':
+                        case 'chip chip-warning':
                             $structure = [
                                 'id' => $surveySearch['id'],
                                 'status' => 'pending',
                             ];
                             $SurveyUpdate = $SurveyService->update($structure);
                             break;
-                        case 'chip+chip-danger':
+                        case 'chip chip-danger':
                             $structure = [
                                 'id' => $surveySearch['id'],
                                 'status' => 'rejected',
@@ -128,8 +127,8 @@ class ScheduleService
                             $SurveyUpdate = $SurveyService->update($structure);
                             break;
 
-                        case 'chip+chip-blue':
-                        case 'chip+chip-primary':
+                        case 'chip chip-blue':
+                        case 'chip chip-primary':
                             $structure = [
                                 'id' => $surveySearch['id'],
                                 'status' => 'process',
@@ -137,16 +136,12 @@ class ScheduleService
                             $SurveyUpdate = $SurveyService->update($structure);
                             break;
 
-                        default:
-                            # code...
-                            break;
                     }
                 }
-
-           
+             
             }
         }
-
+        
         $execution = $this->repository->execute_update($request);
 
         $response = ['status' => $execution['status'], 'data_id' => $execution['data_id'], 'message' => ''];

@@ -209,12 +209,13 @@ class ScheduleList extends Model
         return $returns;
     }
 
-        public function execute_update($request): array
+    public function execute_update($request): array
     {
         $id = $request['id'] ?? $request->input('id');
         $fields = $this->fillable;
 
         $data = $this->where('id', $id)->first();
+
         $request = collect($request);
         if ($data) {
             $submittedData = $request->only($fields);
@@ -231,7 +232,6 @@ class ScheduleList extends Model
             'data_id' => $data->id,
         ];
     }
-
 
     public function getScheduleTitleAttribute($value)
     {
