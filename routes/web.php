@@ -133,4 +133,5 @@ Route::get('/auth-reset-password', 'AuthenticationController@reset_password');
 
 Route::get('/filter_analytics', 'CoreDashboardsController@filterAnalytics');
 Route::post('/schedule_insert', 'CoreDashboardsController@scheduleInsert');
+Route::post('/schedule_update', 'CoreDashboardsController@scheduleUpdate');
 // Route::get('/filter_analytics', 'CoreDashboardsController@filterAnalytics');

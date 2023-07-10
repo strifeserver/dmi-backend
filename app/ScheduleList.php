@@ -157,6 +157,7 @@ class ScheduleList extends Model
     {
 
         $fields = [
+            "id",
             "survey_id",
             "requested_by",
             "approved_by",
@@ -207,6 +208,30 @@ class ScheduleList extends Model
 
         return $returns;
     }
+
+        public function execute_update($request): array
+    {
+        $id = $request['id'] ?? $request->input('id');
+        $fields = $this->fillable;
+
+        $data = $this->where('id', $id)->first();
+        $request = collect($request);
+        if ($data) {
+            $submittedData = $request->only($fields);
+            $beforeUpdate = $data->toArray();
+            $submittedUpdate = $submittedData->toArray();
+            $execute = $data->update($submittedUpdate);
+            $auditing = null; // no update auditing defined
+        } else {
+            return ['result' => 'data does not exist'];
+        }
+
+        return [
+            'status' => $execute ? 1 : 0,
+            'data_id' => $data->id,
+        ];
+    }
+
 
     public function getScheduleTitleAttribute($value)
     {

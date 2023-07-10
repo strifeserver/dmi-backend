@@ -60,7 +60,7 @@ class ScheduleService
                 }
             }
         }
-  
+
         $execution = $this->repository->execute_store($request);
 
         if ($execution['status'] === 1) {
@@ -90,7 +90,65 @@ class ScheduleService
  */
     public function update(array $request): array
     {
+        if (!is_integer($request['survey_id'])) {
+            $SurveyService = app(SurveyService::class);
+            $indexParams = ['filter' => json_encode(['survey_id' => ['filter' => $request['survey_id']]])];
+            $surveySearch = $SurveyService->index($indexParams);
+            // $request['survey_id'] = $surveySearch['id'];
+            if (!empty($surveySearch['result'])) {
+                $surveySearch = $surveySearch['result'][0];
+                $request['survey_id'] = $surveySearch['id'];
+
+                if (!empty($request['classes'])) {
+                    $structure = [
+                        'id' => $surveySearch['id'],
+                    ];
+
+                    switch ($request['classes']) {
+                        case 'chip+chip-success':
+                            $structure = [
+                                'id' => $surveySearch['id'],
+                                'status' => 'finished',
+                            ];
+                            $SurveyUpdate = $SurveyService->update($structure);
+
+                            break;
+                        case 'chip+chip-warning':
+                            $structure = [
+                                'id' => $surveySearch['id'],
+                                'status' => 'pending',
+                            ];
+                            $SurveyUpdate = $SurveyService->update($structure);
+                            break;
+                        case 'chip+chip-danger':
+                            $structure = [
+                                'id' => $surveySearch['id'],
+                                'status' => 'rejected',
+                            ];
+                            $SurveyUpdate = $SurveyService->update($structure);
+                            break;
+
+                        case 'chip+chip-blue':
+                        case 'chip+chip-primary':
+                            $structure = [
+                                'id' => $surveySearch['id'],
+                                'status' => 'process',
+                            ];
+                            $SurveyUpdate = $SurveyService->update($structure);
+                            break;
+
+                        default:
+                            # code...
+                            break;
+                    }
+                }
+
+           
+            }
+        }
+
         $execution = $this->repository->execute_update($request);
+
         $response = ['status' => $execution['status'], 'data_id' => $execution['data_id'], 'message' => ''];
         return $response;
     }

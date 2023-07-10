@@ -24,8 +24,10 @@
     <link rel="stylesheet" href="{{ asset(mix('css/plugins/calendars/fullcalendar.css')) }}">
 @endsection
 <style>
+    .hideitem{
+        display: none;
+    }
     .fc-center {
-        /* display: none; */
     }
 </style>
 
@@ -61,7 +63,7 @@
                             <div id="product-order-chart" class="mb-3"></div>
                             <div class="chart-info d-flex justify-content-between mb-1">
                                 <div class="series-info d-flex align-items-center">
-                                    <i class="fa fa-circle-o text-bold-700 text-primary"></i>
+                                    <i class="fa fa-circle-o text-bold-700 text-success"></i>
                                     <span class="text-bold-600 ml-50">Finished</span>
                                 </div>
                                 <div class="product-result">
@@ -240,6 +242,11 @@
                             </fieldset>
 
 
+                            <fieldset class="form-label-group" hidden>
+                                <input type="text" class="form-control" id="schedule_id"
+                                    placeholder="Event Title">
+                                <label for="schedule_id">Event ID</label>
+                            </fieldset>
                             <fieldset class="form-label-group">
                                 <input type="text" class="form-control" id="cal-event-title"
                                     placeholder="Event Title">
@@ -271,7 +278,7 @@
                                 data-dismiss="modal">Cancel</button>
                             <button type="button"
                                 class="btn btn-flat-danger remove-event d-none waves-effect waves-light"
-                                data-dismiss="modal">Remove</button>
+                                data-dismiss="modal">Cancel</button>
                         </div>
                     </form>
                 </div>
@@ -569,7 +576,6 @@
             fetch('/filter_analytics?status=' + status)
                 .then(response => response.json())
                 .then(data => {
-                    console.log(data)
                     // return false;
                     const totalSurveyCount = data.finishedSurveyCount + data.pendingSurveyCount + data
                         .rejectedSurveyCount;
@@ -615,7 +621,9 @@
     </script>
 
     <script>
+        $(document).ready(function() {
         $('#add_schedule').click(function() {
+
             const survey_id_list = $('#survey-id-list').val();
             const event_title = $('#cal-event-title').val();
             const start_date = $('#cal-start-date').val();
@@ -665,6 +673,9 @@
                     console.log('API request failed:', error);
                 }
             });
+
         });
+
+    });
     </script>
 @endsection

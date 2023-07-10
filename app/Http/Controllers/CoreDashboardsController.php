@@ -8,6 +8,7 @@ use App\Services\SurveyService;
 use App\Services\WorkerService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Survey;
 
 class CoreDashboardsController extends Controller
 {
@@ -117,7 +118,7 @@ class CoreDashboardsController extends Controller
         $pendingSurveys = $surveyService->index($pendingParams);
 
         $finishedSurveys = $surveyService->index($finishedParams);
-
+        
         $finishedSurveyCount = count($finishedSurveys['result'] ?? []);
 
         $pendingSurveyCount = count($pendingSurveys['result'] ?? []);
@@ -189,7 +190,12 @@ class CoreDashboardsController extends Controller
             if (empty($item["end_date"])) {
                 $item["end_date"] = $item["start_date"];
             }
-
+            if(!empty($item['survey_id'])){
+                $fetchSurveyID = Survey::where('id','=',$item['survey_id'])->first();
+                if(!empty($fetchSurveyID)){
+                    $item['survey_code'] = $fetchSurveyID['survey_id'];
+                }
+            }
             unset($item["date"]);
             return $item;
         }, $schedules["result"]);
@@ -203,6 +209,15 @@ class CoreDashboardsController extends Controller
         $ScheduleService = app(ScheduleService::class);
 
         $execution = $ScheduleService->store($request->all());
+        // return $execution;
+
+    }
+    public function scheduleUpdate(request $request)
+    {
+
+        $ScheduleService = app(ScheduleService::class);
+
+        $execution = $ScheduleService->update($request->all());
         // return $execution;
 
     }

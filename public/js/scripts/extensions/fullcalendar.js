@@ -29,16 +29,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // calendar init
   var calendarEl = document.getElementById("fc-default");
-
   var calendar = new FullCalendar.Calendar(calendarEl, {
     events: function (info, successCallback, failureCallback) {
       $.ajax({
-        url: "http://127.0.0.1:8000/schedules",
+        url: window.location.origin + "/schedules",
         dataType: "json",
         success: function (response) {
           var events = response.result.map(function (schedule) {
-            console.log(schedule.classes)
             return {
+              schedule_id: schedule.id,
+              id: schedule.survey_code,
               survey_id: schedule.survey_id,
               title: schedule.schedule_title,
               start: schedule.start_date,
@@ -66,6 +66,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
     //   },
     // ],
+
+    // var surveyIdList = document.getElementById("survey-id-list");
+    // var desiredValue = "your_desired_value";
+
+    // // Loop through the options
+    // for (var i = 0; i < surveyIdList.options.length; i++) {
+    //   var option = surveyIdList.options[i];
+
+    //   if (option.value === desiredValue) {
+    //     // Set the selected property of the option to true
+    //     option.selected = true;
+    //     break;
+    //   }
+    // }
 
     plugins: ["dayGrid", "timeGrid", "interaction"],
     customButtons: {
@@ -120,7 +134,6 @@ document.addEventListener("DOMContentLoaded", function () {
       if (info.event.classNames[0] == "chip-success") {
         textcolor = "Finished";
       }
-      console.log(info.event);
       $(".modal-calendar").modal("show");
       $(".modal-calendar #cal-event-title").val(info.event.title);
       $(".modal-calendar #cal-start-date").val(
@@ -146,10 +159,13 @@ document.addEventListener("DOMContentLoaded", function () {
       $(".calendar-dropdown .dropdown-menu")
         .find(".selected")
         .removeClass("selected");
-      console.log(info.event.classNames[0]);
+      // console.log(info.event.id);
+      $("#survey-id-list").val(info.event.id).trigger("change");
+
       var eventCategory = info.event.extendedProps.dataEventColor;
       var eventText = categoryText[eventCategory];
       $(".modal-calendar .chip-wrapper .chip").remove();
+      $("#schedule_id").val(info.event._def.extendedProps.schedule_id);
       $(".modal-calendar .chip-wrapper").append(
         $(
           "<div class='chip " +
@@ -174,7 +190,60 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Close modal on submit button
   $(".modal-calendar .cal-submit-event").on("click", function () {
+    const survey_id_list = $("#survey-id-list").val();
+    const event_title = $("#cal-event-title").val();
+    const start_date = $("#cal-start-date").val();
+    const end_date = $("#cal-end-date").val();
+    const description = $("#cal-description").val();
+    const schedule_id = $("#schedule_id").val();
+    var chipElement = $(".chip-wrapper").find(".chip");
+    var chipClass = chipElement.attr("class");
+    // console.log('---------')
+    // console.log(chipClass)
+    // return false;
+    // Create an object to hold the data
+    const requestData = {
+      id: schedule_id,
+      survey_id: survey_id_list,
+      schedule_title: event_title,
+      date: start_date,
+      end_date: end_date,
+      description: description,
+      classes: chipClass,
+      schedule_type: "scheduled",
+    };
+
+    // Retrieve CSRF token value from the page meta tag
+    const csrfToken = $('meta[name="csrf-token"]').attr("content");
+
+    // Add CSRF token to the request headers
+    $.ajaxSetup({
+      headers: {
+        "X-CSRF-TOKEN": csrfToken,
+      },
+    });
+
+    // Make an API request when the button is clicked
+    $.ajax({
+      url: "/schedule_update",
+      method: "POST", // Use POST method to send data
+      data: requestData, // Pass the data object
+      success: function (response) {
+        // Process the API response
+        console.log(response);
+      },
+      error: function (xhr, status, error) {
+        console.log(xhr);
+        console.log(status);
+
+        // Handle errors
+        console.log("API request failed:", error);
+      },
+    });
+
     $(".modal-calendar").modal("hide");
+    location.reload();
+    // $('#dashboard-analytics').load(location.href + ' #dashboard-analytics');
   });
 
   // Remove Event
@@ -189,13 +258,13 @@ document.addEventListener("DOMContentLoaded", function () {
       $(".modal-calendar .form-control").val("");
     });
   }
+  $(".modal-calendar .modal-footer .btn").removeAttr("disabled");
 
   // remove disabled attr from button after entering info
   $(".modal-calendar .form-control").on("keyup", function () {
+    console.log('sdsd')
     if ($(".modal-calendar #cal-event-title").val().length >= 1) {
-      $(".modal-calendar .modal-footer .btn").removeAttr("disabled");
     } else {
-      $(".modal-calendar .modal-footer .btn").attr("disabled", true);
     }
   });
 

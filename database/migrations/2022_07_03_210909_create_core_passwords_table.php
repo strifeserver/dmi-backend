@@ -16,7 +16,7 @@ class CreateCorePasswordsTable extends Migration
         Schema::create('core_passwords', function (Blueprint $table) {
             $table->id();
             $table->integer('user_id');
-            $table->string('old_password');
+            $table->string('old_password')->nullable();
             $table->timestamps();
         });
     }

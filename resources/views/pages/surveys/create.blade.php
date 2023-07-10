@@ -503,7 +503,7 @@
 
                 // Make the POST request with the CSRF token included
                 $.ajax({
-                    url: "http://127.0.0.1:8000/transactions",
+                    url: window.location.origin+"/transactions",
                     type: "POST",
                     data: {
                         amount: input,
