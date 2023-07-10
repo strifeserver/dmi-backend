@@ -316,6 +316,7 @@ class SurveyController extends Controller implements Paginatable
                 'schedule_raw' => date(request('requested_schedule')),
                 'date' => date(request('requested_schedule')),
                 'customer_survey_files' => $request->file('customer_survey_files'),
+                'classes'=>'chip chip-warning',
                 'time' => null,
                 'status' => 1,
             ];

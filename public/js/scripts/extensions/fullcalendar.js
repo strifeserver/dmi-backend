@@ -37,6 +37,7 @@ document.addEventListener("DOMContentLoaded", function () {
         success: function (response) {
           var events = response.result.map(function (schedule) {
             return {
+              schedule_id_raw: schedule.id,
               schedule_id: schedule.survey_code,
               id: schedule.survey_code,
               survey_id: schedule.survey_id,
@@ -152,6 +153,9 @@ document.addEventListener("DOMContentLoaded", function () {
       $(".modal-calendar #cal-description").val(
         info.event.extendedProps.description
       );
+      $("#schedule_id_raw").val(
+        info.event._def.extendedProps.schedule_id_raw
+      );
       $(".modal-calendar .cal-submit-event").removeClass("d-none");
       $(".modal-calendar .remove-event").removeClass("d-none");
       $(".modal-calendar .cal-add-event").addClass("d-none");
@@ -159,7 +163,7 @@ document.addEventListener("DOMContentLoaded", function () {
       $(".calendar-dropdown .dropdown-menu")
         .find(".selected")
         .removeClass("selected");
-      // console.log(info.event.id);
+      // console.log(info.event._def.extendedProps);
       $("#survey-id-list").val(info.event.id).trigger("change");
 
       var eventCategory = info.event.extendedProps.dataEventColor;
@@ -189,6 +193,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Close modal on submit button
   $(".modal-calendar .cal-submit-event").on("click", function () {
+    const schedule_id_raw = $("#schedule_id_raw").val();
     const survey_id_list = $("#survey-id-list").val();
     const event_title = $("#cal-event-title").val();
     const start_date = $("#cal-start-date").val();
@@ -201,7 +206,9 @@ document.addEventListener("DOMContentLoaded", function () {
     // return false;
     // Create an object to hold the data
     const requestData = {
+      schedule_id_raw: schedule_id_raw,
       survey_id: survey_id_list,
+      schedule_id: event_title,
       schedule_title: event_title,
       date: start_date,
       end_date: end_date,
@@ -209,8 +216,7 @@ document.addEventListener("DOMContentLoaded", function () {
       classes: chipClass,
       schedule_type: "scheduled",
     };
-    console.log(requestData);
-    return false;
+
     // Retrieve CSRF token value from the page meta tag
     const csrfToken = $('meta[name="csrf-token"]').attr("content");
 
@@ -229,6 +235,7 @@ document.addEventListener("DOMContentLoaded", function () {
       success: function (response) {
         // Process the API response
         console.log(response);
+        location.reload();
       },
       error: function (xhr, status, error) {
         console.log(xhr);

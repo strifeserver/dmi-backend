@@ -247,6 +247,12 @@
                                     placeholder="Event Title">
                                 <label for="schedule_id">Event ID</label>
                             </fieldset>
+
+                            <fieldset class="form-label-group" hidden>
+                                <input type="text" class="form-control" id="schedule_id_raw"
+                                    placeholder="Event Title">
+                                <label for="schedule_id">Schedule ID raw</label>
+                            </fieldset>
                             <fieldset class="form-label-group">
                                 <input type="text" class="form-control" id="cal-event-title"
                                     placeholder="Event Title">
