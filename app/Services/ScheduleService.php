@@ -64,30 +64,24 @@ class ScheduleService
                         $structure = [
                             'id' => $surveySearch['result'][0]['id'],
                         ];
-                     
+                        
                         switch ($request['classes']) {
                             case 'chip+chip-success':
                             case 'chip chip-success':
-                                $structure = [
-                                    'id' => $surveySearch['id'],
-                                    'status' => 'finished',
-                                ];
+                                $structure['status'] = 'finished';
                                 $SurveyUpdate = $SurveyService->update($structure);
                                 break;
                             case 'chip+chip-warning':
                             case 'chip chip-warning':
-                                $structure = [
-                                    'id' => $surveySearch['id'],
-                                    'status' => 'pending',
-                                ];
+                                $structure['status'] = 'pending';
+
+
                                 $SurveyUpdate = $SurveyService->update($structure);
                                 break;
                             case 'chip+chip-danger':
                             case 'chip chip-danger':
-                                $structure = [
-                                    'id' => $surveySearch['id'],
-                                    'status' => 'rejected',
-                                ];
+                                $structure['status'] = 'rejected';
+
                                 $SurveyUpdate = $SurveyService->update($structure);
                                 break;
     
