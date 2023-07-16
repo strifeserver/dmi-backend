@@ -201,7 +201,7 @@ class WorkersController extends Controller implements Paginatable
         return view($page_variables['create_page'], $page_variables);
     }
 
-    public function store(SurveyPostRequest $request)
+    public function store(request $request)
     {
         $page_variables = $this->pageService->page_variables(['controller_variables' => $this->controller_variables(), 'mode' => 'Create']);
         $execution = $this->WorkerService->store($request->all());
