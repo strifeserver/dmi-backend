@@ -9,6 +9,7 @@ use App\Services\WorkerService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Survey;
+use App\User;
 
 class CoreDashboardsController extends Controller
 {
@@ -63,7 +64,10 @@ class CoreDashboardsController extends Controller
                     }
 
                 }
-  
+                $authid = auth()->id();
+                $getUser = User::where('id','=', $authid)->first();
+                $access_level = $getUser->access_level;
+
                 return view('/pages/dashboard-analytics', [
                     'workerCount' => $workerCount,
                     'survey_ids' => $survey_ids,
@@ -74,6 +78,7 @@ class CoreDashboardsController extends Controller
                     'finishedSurveyPercentage' => $fetchAnalytics['finishedSurveyPercentage'],
                     'pendingSurveyPercentage' => $fetchAnalytics['pendingSurveyPercentage'],
                     'rejectedSurveyPercentage' => $fetchAnalytics['rejectedSurveyPercentage'],
+                    'access_level'=> $access_level
                 ]);
                 break;
         }

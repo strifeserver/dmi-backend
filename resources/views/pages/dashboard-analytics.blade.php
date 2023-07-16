@@ -1,6 +1,6 @@
 @extends('layouts/contentLayoutMaster')
 
-@section('title', 'Dashboard Analytics')
+
 
 @section('vendor-style')
     <!-- vendor css files -->
@@ -33,11 +33,16 @@
     .payment_amount_prompt {
         display: none;
     }
+    
 </style>
+
+
+@if($access_level != 3)
+@section('title', 'Dashboard Analytics')
 
 @section('content')
     {{-- Dashboard Analytics Start --}}
-    <section id="dashboard-analytics">
+    <section id="dashboard-analytics" >
 
         <div class="row">
 
@@ -726,3 +731,4 @@
         });
     </script>
 @endsection
+@endif
