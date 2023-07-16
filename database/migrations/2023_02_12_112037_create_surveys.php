@@ -20,11 +20,13 @@ class CreateSurveys extends Migration
             $table->string('address')->nullable();
             $table->string('email_address')->nullable();
             $table->string('mobile_number')->nullable();
+            $table->string('sqm_estimation')->nullable();
             $table->text('survey_pricing_details')->nullable();
             $table->text('admin_survey_files')->nullable();
             $table->text('customer_survey_files')->nullable();
             $table->text('schedule_id')->nullable();
             $table->string('status')->default('pending');
+            $table->integer('created_by')->nullable();
             $table->timestamps();
         });
     }

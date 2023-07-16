@@ -9,6 +9,7 @@ class ScheduleList extends Model
 {
     use HasFactory;
     protected $fillable = [
+        "survey_tracking_id",
         "survey_id",
         "schedule_title",
         "classes",
@@ -159,6 +160,7 @@ class ScheduleList extends Model
         $fields = [
             "id",
             "survey_id",
+            "survey_tracking_id",
             "requested_by",
             "approved_by",
             "schedule_raw",
@@ -201,6 +203,9 @@ class ScheduleList extends Model
 
         $submittedData = collect($request)->only($fields)->toArray();
         $execute = $this::create($submittedData)->id;
+        // echo '<pre>';
+        // print_r($request);
+        // exit;
 
         $executeStatus = (is_integer($execute)) ? 1 : 0;
         $returns['status'] = $executeStatus;

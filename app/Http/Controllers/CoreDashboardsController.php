@@ -47,7 +47,13 @@ class CoreDashboardsController extends Controller
                 $getSurveys = $surveyService->index([]);
                 $getWorkers = $workerService->index([]);
                 if (!empty($getWorkers['result'])) {
-                    $workerCount = count($getWorkers['result']);
+                    foreach ($getWorkers['result'] as $key => $value) {
+                        if($value['status'] == 1){
+                            $workerCount++;
+                        }
+                     
+                    }
+                    // $workerCount = count($getWorkers['result']);
                 }
 
                 if (!empty($getSurveys['result'])) {
@@ -57,7 +63,7 @@ class CoreDashboardsController extends Controller
                     }
 
                 }
-
+  
                 return view('/pages/dashboard-analytics', [
                     'workerCount' => $workerCount,
                     'survey_ids' => $survey_ids,
@@ -209,6 +215,8 @@ class CoreDashboardsController extends Controller
         $ScheduleService = app(ScheduleService::class);
 
         $execution = $ScheduleService->store($request->all());
+        print_r($execution);
+        exit;
         // return $execution;
 
     }

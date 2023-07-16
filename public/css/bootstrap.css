@@ -2609,13 +2609,13 @@ fieldset:disabled a.btn {
 
 .btn-secondary {
   color: #2a2e30;
-  background-color: #b8c2cc;
+  /* background-color: #b8c2cc; */
   border-color: #b8c2cc;
 }
 
 .btn-secondary:hover {
   color: #2a2e30;
-  background-color: #a2afbc;
+  /* background-color: #a2afbc; */
   border-color: #9aa9b7;
 }
 
@@ -2635,7 +2635,7 @@ fieldset:disabled a.btn {
 .btn-secondary:not(:disabled):not(.disabled).active,
 .show > .btn-secondary.dropdown-toggle {
   color: #2a2e30;
-  background-color: #9aa9b7;
+  background-color: #f1f1f1;
   border-color: #93a2b1;
 }
 

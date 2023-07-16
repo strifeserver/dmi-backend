@@ -40,6 +40,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('get_contents', 'ContentManagementController@api_index');
 Route::POST('create_payment_link', 'PaymentController@create_payment_link');
+Route::POST('create_payment_link_test', 'PaymentController@initiateGCashPayment');
 Route::POST('newsletter_unsubscribe', 'NewsletterSubscriptionController@newsletter_unsubscribe');
 Route::POST('newsletter_subscribe', 'NewsletterSubscriptionController@newsletter_subscribe');
 Route::get('test_prov', 'TestController@testerfunction');
@@ -47,4 +48,6 @@ Route::get('test_prov', 'TestController@testerfunction');
 Route::POST('request_survey', 'SurveyController@create_survey');
 Route::POST('track_survey', 'SurveyController@track_survey');
 Route::GET('scheduled_dates', 'SurveyController@scheduled_dates');
-
+Route::post('/schedule_insert', 'CoreDashboardsController@scheduleInsert');
+Route::get('/paypal_payment', 'PaypalController@payment');
+Route::POST('/workerupdatestatus', 'WorkersController@workerCheckUpdate');

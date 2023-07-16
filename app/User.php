@@ -1,20 +1,18 @@
 <?php
 
 namespace App;
-use Crypt;
-use Laravel\Passport\HasApiTokens;
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Spatie\Permission\Traits\HasRoles;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Carbon\Carbon;
 
+use Carbon\Carbon;
+use Crypt;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Passport\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, Notifiable,HasRoles;
+    use HasApiTokens, Notifiable, HasRoles;
     use SoftDeletes;
     protected $table = 'core_users';
     /**
@@ -23,7 +21,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'username', 'email', 'password','first_name','last_name','mobile_number','account_status','google2fa_secret','password_updated_at','otp','temporary_password','temporary_password_created','account_lock_end','access_level'
+        'hash', 'username', 'email', 'password', 'first_name', 'last_name', 'mobile_number', 'account_status', 'google2fa_secret', 'password_updated_at', 'otp', 'temporary_password', 'temporary_password_created', 'account_lock_end', 'access_level',
     ];
 
     /**
@@ -32,7 +30,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token','google2fa_secret'
+        'password', 'remember_token', 'google2fa_secret',
     ];
 
     /**
@@ -44,13 +42,29 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function setPasswordAttribute($value){
+    public function store(array $request): array
+    {
+        $returns = [];
+        $id = optional($request)->get('id', '');
+        $fields = $this->fillable;
+
+        $submittedData = collect($request)->only($fields)->toArray();
+        $execute = $this::create($submittedData)->id;
+        $executeStatus = (is_integer($execute)) ? 1 : 0;
+        $returns['status'] = $executeStatus;
+        $returns['data_id'] = $execute;
+
+        return $returns;
+    }
+
+    public function setPasswordAttribute($value)
+    {
         $this->attributes['password'] = bcrypt($value);
     }
 
     public function setGoogle2faSecretAttribute($value)
     {
-        if(!empty($value)){
+        if (!empty($value)) {
             $this->attributes['google2fa_secret'] = Crypt::encrypt($value);
         }
     }
@@ -64,60 +78,58 @@ class User extends Authenticatable
         return $value;
     }
 
-    public function setPasswordUpdatedAtAttribute($value){
+    public function setPasswordUpdatedAtAttribute($value)
+    {
         $this->attributes['password_updated_at'] = Carbon::now();
     }
 
-
-    public function core_passwords(){
+    public function core_passwords()
+    {
         return $this->hasMany('App\core_password');
     }
 
     public function setFirstNameAttribute($value)
-   {
+    {
         $this->attributes['first_name'] = Crypt::encrypt($value);
-   }
+    }
 
-   public function getFirstNameAttribute($value)
-   {
+    public function getFirstNameAttribute($value)
+    {
         return Crypt::decrypt($value);
-   }
+    }
 
-   public function setLastNameAttribute($value)
-   {
+    public function setLastNameAttribute($value)
+    {
         $this->attributes['last_name'] = Crypt::encrypt($value);
-   }
+    }
 
-   public function getLastNameAttribute($value)
-   {
+    public function getLastNameAttribute($value)
+    {
         return Crypt::decrypt($value);
-   }
+    }
 
     public function setEmailAttribute($value)
-   {
+    {
         $this->attributes['email'] = Crypt::encrypt($value);
-   }
+    }
 
-   public function getEmailAttribute($value)
-   {
+    public function getEmailAttribute($value)
+    {
         return Crypt::decrypt($value);
-   }
-
-   public function getcreatedAtAttribute($value)
-   {
-    if(!empty($value)){
-      return date('Y-m-d h:i:s A', strtotime($value));
     }
-   }
 
-   public function getupdatedAtAttribute($value)
-   {
-    if(!empty($value)){
-          return date('Y-m-d h:i:s A', strtotime($value));
+    public function getcreatedAtAttribute($value)
+    {
+        if (!empty($value)) {
+            return date('Y-m-d h:i:s A', strtotime($value));
+        }
     }
-   }
 
-
-   
+    public function getupdatedAtAttribute($value)
+    {
+        if (!empty($value)) {
+            return date('Y-m-d h:i:s A', strtotime($value));
+        }
+    }
 
 }

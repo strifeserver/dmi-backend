@@ -190,8 +190,10 @@
 }
 .picker__day--disabled,
 .picker__day--disabled:hover {
-	background: #fafafa;
-	color: #999999;
+	/* background: #fafafa;
+	color: #999999; */
+	background: #979797;
+    color: #f7f7f7;
 	cursor: default;
 }
 .picker__day--disabled:before {

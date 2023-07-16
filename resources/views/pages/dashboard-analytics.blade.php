@@ -24,10 +24,14 @@
     <link rel="stylesheet" href="{{ asset(mix('css/plugins/calendars/fullcalendar.css')) }}">
 @endsection
 <style>
-    .hideitem{
+    .hideitem {
         display: none;
     }
-    .fc-center {
+
+    .fc-center {}
+
+    .payment_amount_prompt {
+        display: none;
     }
 </style>
 
@@ -115,7 +119,7 @@
                         <div class="card-body pt-0">
                             <div class="row">
                                 <div class="col-sm-12 d-flex flex-column flex-wrap text-center">
-                                    <h1 class="font-large-2 text-bold-700 mt-2 mb-0">{{$workerCount}}</h1>
+                                    <h1 class="font-large-2 text-bold-700 mt-2 mb-0">{{ $workerCount }}</h1>
                                     <small>Worker</small>
                                 </div>
                                 {{-- <div class="col-sm-10 col-12 d-flex justify-content-center">
@@ -195,10 +199,10 @@
                             <span aria-hidden="true">×</span>
                         </button>
                     </div>
-    
+
                     <form action="#">
 
-          
+
                         <div class="modal-body">
                             <div class="d-flex justify-content-between align-items-center add-category">
                                 <p>Select Category</p>
@@ -243,8 +247,7 @@
 
 
                             <fieldset class="form-label-group" hidden>
-                                <input type="text" class="form-control" id="schedule_id"
-                                    placeholder="Event Title">
+                                <input type="text" class="form-control" id="schedule_id" placeholder="Event Title">
                                 <label for="schedule_id">Event ID</label>
                             </fieldset>
 
@@ -272,8 +275,18 @@
                                 <textarea class="form-control" id="cal-description" rows="5" placeholder="Description"></textarea>
                                 <label for="cal-description">Description</label>
                             </fieldset>
+
+                            <fieldset id="payment_input" class="form-label-group payment_amount_prompt">
+                                <p>Payment Amount</p>
+                                <input type="text" class="form-control" id="payment_amount" placeholder="0.00">
+                                <label for="payment_amount">Payment Amount</label>
+                            </fieldset>
+
                         </div>
                         <div class="modal-footer">
+                            <a id="create_payment_link"  style="color:white !important;"
+                                class="btn btn-primary waves-effect waves-light">
+                                Create Payment</a>
                             <button id="add_schedule" type="button"
                                 class="btn btn-primary cal-add-event waves-effect waves-light">
                                 Add Schedule</button>
@@ -630,61 +643,86 @@
 
     <script>
         $(document).ready(function() {
-        $('#add_schedule').click(function() {
-            $(".modal-calendar .modal-footer .btn").removeAttr("disabled");
-            const survey_id_list = $('#survey-id-list').val();
-            const event_title = $('#cal-event-title').val();
-            const start_date = $('#cal-start-date').val();
-            const end_date = $('#cal-end-date').val();
-            const description = $('#cal-description').val();
-            var chipElement = $('.chip-wrapper').find('.chip');
-            var chipClass = chipElement.attr('class');
-            // console.log('---------')
-            // console.log(chipClass)
-            // return false;
-            // Create an object to hold the data
-            const requestData = {
-                survey_id: survey_id_list,
-                schedule_title: event_title,
-                date: start_date,
-                end_date: end_date,
-                description: description,
-                classes: chipClass,
-                schedule_type: 'scheduled'
-                
-            };
+            $('#add_schedule').click(function() {
+                $(".modal-calendar .modal-footer .btn").removeAttr("disabled");
+                const survey_id_list = $('#survey-id-list').val();
+                const event_title = $('#cal-event-title').val();
+                const start_date = $('#cal-start-date').val();
+                const end_date = $('#cal-end-date').val();
+                const description = $('#cal-description').val();
+                const payment_amount = $('#payment_amount').val();
+                var chipElement = $('.chip-wrapper').find('.chip');
+                var chipClass = chipElement.attr('class');
+                // console.log('---------')
+                // console.log(chipClass)
+                // return false;
+                // Create an object to hold the data
+                const requestData = {
+                    survey_id: survey_id_list,
+                    schedule_title: event_title,
+                    date: start_date,
+                    end_date: end_date,
+                    description: description,
+                    classes: chipClass,
+                    schedule_type: 'scheduled',
+                    payment_amount: payment_amount,
 
-            // Retrieve CSRF token value from the page meta tag
-            const csrfToken = $('meta[name="csrf-token"]').attr('content');
+                };
+                // Retrieve CSRF token value from the page meta tag
+                const csrfToken = $('meta[name="csrf-token"]').attr('content');
 
-            // Add CSRF token to the request headers
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': csrfToken
-                }
-            });
+                // Add CSRF token to the request headers
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken
+                    }
+                });
 
-            // Make an API request when the button is clicked
-            $.ajax({
-                url: '/schedule_insert',
-                method: 'POST', // Use POST method to send data
-                data: requestData, // Pass the data object
-                success: function(response) {
-                    // Process the API response
-                    console.log(response);
-                    location.reload();
-                },
-                error: function(xhr, status, error) {
-                    console.log(xhr);
-                    console.log(status);
+                // Make an API request when the button is clicked
+                $.ajax({
+                    url: '/schedule_insert',
+                    method: 'POST', // Use POST method to send data
+                    data: requestData, // Pass the data object
+                    success: function(response) {
+                        // Process the API response
+                        console.log(response);
+                        location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                        console.log(xhr);
+                        console.log(status);
 
-                    // Handle errors
-                    console.log('API request failed:', error);
-                }
+                        // Handle errors
+                        console.log('API request failed:', error);
+                    }
+                });
+
             });
 
         });
 
-    });
+
+
+
+        // Wait for the DOM content to load
+        document.addEventListener("DOMContentLoaded", function() {
+            const addButton = document.getElementById("create_payment_link");
+            const paymentInput = document.getElementById("payment_input");
+            const paymentAmountInput = document.getElementById("payment_amount");
+
+            addButton.addEventListener("click", function() {
+                if (paymentInput.classList.contains("payment_amount_prompt")) {
+                    // Remove the payment_amount_prompt class to hide the fieldset
+                    paymentInput.classList.remove("payment_amount_prompt");
+                    // Set the payment_amount input value to blank
+                    paymentAmountInput.value = "";
+                    // addButton.textContent = "Add Schedule";
+                } else {
+                    // Add the payment_amount_prompt class to show the fieldset
+                    paymentInput.classList.add("payment_amount_prompt");
+                    addButton.textContent = "Create Payment";
+                }
+            });
+        });
     </script>
 @endsection

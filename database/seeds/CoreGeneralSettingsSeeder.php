@@ -40,7 +40,7 @@ class CoreGeneralSettingsSeeder extends Seeder
 
         DB::table('core_settings')->insert([
             'setting_name' => 'MaxAttempts',
-            'setting_value' => '2',
+            'setting_value' => '15',
             'setting_description' => 'max number of login attempts'
         ]);
 

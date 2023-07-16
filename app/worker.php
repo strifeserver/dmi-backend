@@ -24,6 +24,7 @@ class worker extends Model
             "id",
             "worker_name",
             "position",
+            "status",
         ];
 
         $amibiguous_fields = [

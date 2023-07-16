@@ -15,6 +15,7 @@ class CreateScheduleLists extends Migration
     {
         Schema::create('schedule_lists', function (Blueprint $table) {
             $table->id();
+            $table->string('survey_tracking_id')->nullable();
             $table->integer('survey_id')->nullable();
             $table->string('schedule_title')->nullable();
             $table->text('requested_by')->nullable();

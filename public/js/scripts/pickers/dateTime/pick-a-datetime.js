@@ -19,6 +19,41 @@
         selectMonths: true,
         selectYears: true
     });
+    // Format Date Picker-new date only
+    var minDate = new Date();
+    minDate.setDate(minDate.getDate() + 1);
+    
+    // Fetch data from the API endpoint
+    fetch('/api/scheduled_dates')
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === "success" && data.result) {
+          // Extract the dates from the API response
+          var scheduledDates = data.result.map(item => item.date);
+          
+          // Convert and format the dates as required
+          var disabledDates = scheduledDates.map(dateString => {
+            var dateParts = dateString.split('-');
+            var year = parseInt(dateParts[2], 10);
+            var month = parseInt(dateParts[0], 10) - 1; // Subtract 1 to account for zero-based months
+            var day = parseInt(dateParts[1], 10);
+            return [year, month, day];
+          });
+          
+          // Initialize the pickadate plugin with disabled dates
+          $('.format-picker-new-date').pickadate({
+            format: 'mm-dd-yyyy',
+            selectMonths: true,
+            selectYears: true,
+            disable: disabledDates,
+            min: minDate
+          });
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching scheduled dates:', error);
+      });
+    
 
     // Date limits
     $('.pickadate-limits').pickadate({

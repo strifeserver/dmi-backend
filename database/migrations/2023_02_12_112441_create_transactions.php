@@ -17,7 +17,8 @@ class CreateTransactions extends Migration
             $table->id();
             $table->string('survey_id')->nullable();
             $table->string('requested_amount')->nullable();
-            $table->string('paid_amount')->nullable();
+            $table->string('payment_url')->nullable();
+            $table->string('tagged_schedule_id')->nullable();
             $table->integer('status')->default(0);
             $table->timestamps();
         });

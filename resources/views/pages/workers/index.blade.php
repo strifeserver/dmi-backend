@@ -315,7 +315,7 @@
             js.src = "{{ asset('js/scripts/table_js/table_v1.js') }}";
         }
         if (table_version == 'v2') {
-            js.src = "{{ asset('js/scripts/table_js/table_v2.js') }}";
+            js.src = "{{ asset('js/scripts/table_js/worker.js') }}";
         }
 
         head.appendChild(js);

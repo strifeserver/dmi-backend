@@ -5,7 +5,10 @@ namespace App\Services;
 use App\ScheduleList;
 use App\Services\ApiService;
 use App\Services\AuditTrailService;
+use App\Services\PaymentSettingService;
 use App\Services\SurveyService;
+use App\Services\TransactionService;
+use App\Survey;
 use Helper;
 
 class ScheduleService
@@ -58,13 +61,11 @@ class ScheduleService
                 if (!empty($surveySearch['result'])) {
                     $request['survey_id'] = $surveySearch['result'][0]['id'];
 
-                 
-                 
                     if (!empty($request['classes'])) {
                         $structure = [
                             'id' => $surveySearch['result'][0]['id'],
                         ];
-                        
+
                         switch ($request['classes']) {
                             case 'chip+chip-success':
                             case 'chip chip-success':
@@ -75,7 +76,6 @@ class ScheduleService
                             case 'chip chip-warning':
                                 $structure['status'] = 'pending';
 
-
                                 $SurveyUpdate = $SurveyService->update($structure);
                                 break;
                             case 'chip+chip-danger':
@@ -84,7 +84,7 @@ class ScheduleService
 
                                 $SurveyUpdate = $SurveyService->update($structure);
                                 break;
-    
+
                             case 'chip+chip-blue':
                             case 'chip chip-blue':
                             case 'chip+chip-primary':
@@ -95,25 +95,140 @@ class ScheduleService
                                 ];
                                 $SurveyUpdate = $SurveyService->update($structure);
                                 break;
-    
-                        }
-                        
-                    }
 
+                        }
+
+                    }
 
                 }
             }
         }
-       
+        $getSurveyID = Survey::where('id','=',$request['survey_id'])->first();
+        if($getSurveyID){
+            $request['survey_tracking_id'] = $getSurveyID->survey_id; 
+        }
+   
         $execution = $this->repository->execute_store($request);
-
+        // $execution = [
+        //     'status' => 1,
+        //     'data_id' => 10,
+        // ];
         if ($execution['status'] === 1) {
             $audit_data = ['incoming_data' => $request];
+        }
+        $request['payment_gateway'] = 'paymongo';
+        if (isset($request['payment_amount'])) {
+
+            if ($request['payment_gateway'] == 'paymongo') {
+                $payment_amount = $request['payment_amount'];
+                if ($payment_amount > 100) {
+                    $createPaymentLink = $this->create_payment_link($request);
+                    // $createPaymentLink = [
+                    //     'checkout_url' => 'https://pm.link/strifeserver/test/j7Lr371',
+                    //     'reference_number' => 'j7Lr371',
+                    //     'status' => '1',
+                    // ];
+                    $paymentURL = $createPaymentLink['checkout_url'];
+
+                }
+            }
+
+            if ($request['payment_gateway'] == 'paypal') {
+                $payment_amount = $request['payment_amount'];
+                if ($payment_amount > 100) {
+                    // $createPaymentLink = $this->create_payment_link($request);
+                    $PaypalResult = [
+                        "id" => "6XK7750295684622V",
+                        "status" => "CREATED",
+                        "links" => [
+                            [
+                                "href" => "https://api.sandbox.paypal.com/v2/checkout/orders/6XK7750295684622V",
+                                "rel" => "self",
+                                "method" => "GET",
+                            ],
+                            [
+                                "href" => "https://www.sandbox.paypal.com/checkoutnow?token=6XK7750295684622V",
+                                "rel" => "approve",
+                                "method" => "GET",
+                            ],
+                            [
+                                "href" => "https://api.sandbox.paypal.com/v2/checkout/orders/6XK7750295684622V",
+                                "rel" => "update",
+                                "method" => "PATCH",
+                            ],
+                            [
+                                "href" => "https://api.sandbox.paypal.com/v2/checkout/orders/6XK7750295684622V/capture",
+                                "rel" => "capture",
+                                "method" => "POST",
+                            ],
+                        ],
+                    ];
+
+                    $paymentURL = $PaypalResult['links'][1];
+                }
+
+            }
+
+            if (isset($paymentURL)) {
+                $execution['payment'] = $paymentURL;
+                $getSurveyInfo = Survey::where('id', '=', $request['survey_id'])->first();
+                if ($getSurveyInfo) {
+                    $surveyID = $getSurveyInfo['survey_id'];
+
+                }
+
+                $transactionStructure = [
+                    'tagged_schedule_id' => $execution['data_id'],
+                    'survey_id' => $surveyID,
+                    'requested_amount' => $request['payment_amount'],
+                    'payment_url' => $paymentURL,
+                    'status' => 0,
+                ];
+
+                $transactionService = app(TransactionService::class);
+                $createTransactionLog = $transactionService->store($transactionStructure);
+
+            }
+
         }
 
         $response = $this->api_service->api_returns($execution);
 
         return $response;
+    }
+
+    public function create_payment_link($request)
+    {
+        // The expected amount that the link should receive. A positive integer with a minimum amount of 100. 100 is the smallest unit in cents. If you want the link to receive an amount of 1.00, the value that you should pass is 100. If you want the link to receive an amount of 1500.50, the value that you should pass is 150050.
+
+        $returns = [];
+        // inputs
+        $getSurveyInfo = Survey::where('id', '=', $request['survey_id'])->first();
+
+        $userPayAmount = $request['payment_amount'];
+        $description = $getSurveyInfo['survey_id'] ?? '';
+        $remarks = 'Payment Creation';
+        // inputs
+
+        $payMongoConverter = 100;
+        $payMongoValue = $userPayAmount * $payMongoConverter;
+
+        $paymentSetting = app(PaymentSettingService::class);
+        $createLink = $paymentSetting->create_paymongo_link($payMongoValue, $description, $remarks);
+        if ($createLink['status'] == 200) {
+            $checkoutUrl = @$createLink['body']['attributes']['checkout_url'];
+            if (!empty($checkoutUrl)) {
+                $returns['checkout_url'] = @$checkoutUrl;
+                $returns['reference_number'] = @$createLink['body']['attributes']['reference_number'];
+                $returns['status'] = 1;
+
+            }
+        } else {
+            $returns['errors'] = $createLink['errors'];
+        }
+        // print_r($returns);
+        // exit;
+        return $returns;
     }
 
 /**
@@ -134,7 +249,7 @@ class ScheduleService
  */
     public function update(array $request): array
     {
-        
+
         if (!is_integer($request['survey_id'])) {
             $SurveyService = app(SurveyService::class);
             $indexParams = ['filter' => json_encode(['survey_id' => ['filter' => $request['survey_id']]])];
@@ -149,7 +264,7 @@ class ScheduleService
                     $structure = [
                         'id' => $surveySearch['id'],
                     ];
-                    
+
                     switch ($request['classes']) {
                         case 'chip+chip-success':
                         case 'chip chip-success':
@@ -166,7 +281,7 @@ class ScheduleService
                                 'status' => 'pending',
                             ];
                             $SurveyUpdate = $SurveyService->update($structure);
-                           
+
                             break;
                         case 'chip+chip-danger':
                         case 'chip chip-danger':
@@ -174,7 +289,7 @@ class ScheduleService
                                 'id' => $surveySearch['id'],
                                 'status' => 'rejected',
                             ];
-                            
+
                             $SurveyUpdate = $SurveyService->update($structure);
                             break;
 
@@ -191,7 +306,7 @@ class ScheduleService
 
                     }
                 }
-             
+
             }
         }
         $request['id'] = $request['schedule_id_raw'];

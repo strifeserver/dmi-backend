@@ -17,6 +17,7 @@ class CreateWorkersTable extends Migration
             $table->id();
             $table->string('worker_name');
             $table->string('position')->nullable();
+            $table->string('status')->default(0);
             $table->timestamps();
         });
     }

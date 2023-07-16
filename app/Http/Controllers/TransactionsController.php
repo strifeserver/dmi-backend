@@ -8,8 +8,6 @@ class TransactionsController extends Controller
 {
     public function store(TransactionPostRequest $request)
     {
-        print_r($request->all());
-        exit;
 
         $page_variables = $this->pageService->page_variables(['controller_variables' => $this->controller_variables(), 'mode' => 'Create']);
         $validated = $request->validated();

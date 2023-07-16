@@ -43,7 +43,7 @@ class SurveyService
             'items_per_page' => $itemsPerPage,
             'filters' => $filter,
         ];
-        
+
         $execution = $this->repository->index($data);
         $response = $this->api_service->api_returns($execution);
         return $response;
@@ -53,9 +53,9 @@ class SurveyService
  * @param array $request
  * @return array
  */
-    public function store(array $request)
+    public function store($request)
     {
-        
+
         $customer_file_names = [];
         $customer_survey_files_upload = $request['customer_survey_files'];
         if ($customer_survey_files_upload) {

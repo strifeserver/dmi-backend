@@ -24,19 +24,34 @@
                       <p class="px-2">Fill the below form to create a new account.</p>
                       <div class="card-content">
                           <div class="card-body pt-0">
-                            <form method="POST" action="{{ route('register') }}">
+                            <form method="POST" action="{{ route('customer_registration') }}">
                               @csrf
-                                  <div class="form-label-group">
-                                      <!-- <input type="text" id="inputName" class="form-control" placeholder="Name" required> -->
-                                      <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="username" placeholder="username" value="{{ old('username') }}" required autocomplete="name" autofocus>
-                                      <label for="name">Username</label>
-                                      @error('name')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                      @enderror
-                                  </div>
-                                  <div class="form-label-group">
+                              
+
+                                <div class="form-label-group">
+                                    <!-- <input type="email" id="inputEmail" class="form-control" placeholder="Email" required> -->
+                                    <input id="first_name" type="text" class="form-control @error('first_name') is-invalid @enderror" name="first_name" placeholder="First Name" value="{{ old('first_name') }}" required autocomplete="First Name">
+                                    <label for="first_name">first_name</label>
+                                    @error('first_name')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+                                </div>
+                                
+
+                                <div class="form-label-group">
+                                    <!-- <input type="email" id="inputEmail" class="form-control" placeholder="Email" required> -->
+                                    <input id="last_name" type="text" class="form-control @error('last_name') is-invalid @enderror" name="last_name" placeholder="Last Name" value="{{ old('last_name') }}" required autocomplete="Last Name">
+                                    <label for="last_name">last_name</label>
+                                    @error('last_name')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+                                </div>
+                                
+                                  <div class="form-label-group" >
                                       <!-- <input type="email" id="inputEmail" class="form-control" placeholder="Email" required> -->
                                       <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" placeholder="Email" value="{{ old('email') }}" required autocomplete="email">
                                       <label for="email">Email</label>
@@ -79,6 +94,8 @@
                                   <a href="login" class="btn btn-outline-primary float-left btn-inline mb-50">Login</a>
                                   <button type="submit" class="btn btn-primary float-right btn-inline mb-50">Register</a>
                               </form>
+                              <button id="home_button" type="submit" class="btn btn-primary float-right btn-inline"
+                                        style="margin-right: 10px;" onclick="homeRed()">Home</button>
                           </div>
                       </div>
                   </div>
@@ -87,4 +104,17 @@
       </div>
   </div>
 </section>
+<script>
+
+
+            function homeRed(){
+                    window.location.href = '/home';
+            }
+            // document.addEventListener('DOMContentLoaded', function() {
+            //     document.getElementById('home_button').addEventListener('click', function() {
+            //     });
+            // });
+
+
+</script>
 @endsection

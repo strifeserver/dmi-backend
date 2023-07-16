@@ -49,9 +49,10 @@ class SurveyPostRequest extends FormRequest
         return [
             'id' => ['nullable'],
             'survey_id' => ['nullable'],
-            'name' => ['nullable'],
-            'email_address' => ['nullable'],
-            'mobile_number' => ['nullable'],
+            'sqm_estimation' => ['nullable','integer'],
+            'name' => ['required'],
+            'email_address' => ['required','email'],
+            'mobile_number' => ['nullable', 'regex:/^(09\d{9}|639\d{9})$/'],
             'schedule_info' => ['nullable'],
             'status' => ['nullable'],
             'survey_pricing_details' => ['nullable'],

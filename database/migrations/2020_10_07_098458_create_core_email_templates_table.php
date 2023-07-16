@@ -15,13 +15,13 @@ class CreateCoreEmailTemplatesTable extends Migration
     {
         Schema::create('core_email_templates', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('identifier');
-            $table->string('name');
-            $table->string('title');
-            $table->string('email');
-            $table->string('subject');
-            $table->longtext('content');
-            $table->longtext('auto_reply');
+            $table->string('identifier')->nullable();
+            $table->string('name')->nullable();
+            $table->string('title')->nullable();
+            $table->string('email')->nullable();
+            $table->string('subject')->nullable();
+            $table->longtext('content')->nullable();
+            $table->longtext('auto_reply')->nullable();
             $table->string('succes_message')->default("Thank you for emailing us!");
             $table->integer('is_enabled')->default(0);
             $table->text('created_by')->nullable();

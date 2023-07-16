@@ -254,4 +254,23 @@ class WorkersController extends Controller implements Paginatable
         return redirect()->route($page_variables['destroy_page'])->with($return_msg['type'], $return_msg['remarks']);
     }
 
+    public function workerCheckUpdate(request $request){
+        $validatedData = $request->validate([
+            'id' => 'required|numeric',
+            'status' => 'required|in:0,1',
+        ]);
+
+        $worker = Worker::find($validatedData['id']);
+
+        if (!$worker) {
+            return response()->json(['message' => 'Worker not found'], 404);
+        }
+
+        $worker->status = $validatedData['status'];
+        $worker->save();
+
+        return response()->json(['message' => 'Worker status updated successfully', 'worker' => $worker]);
+
+    }
+
 }

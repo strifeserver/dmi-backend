@@ -2824,19 +2824,21 @@ input:focus ~ .bg-secondary {
 
 .btn-secondary {
   border-color: #9aa9b7 !important;
-  background-color: #b8c2cc !important;
-  color: #fff;
+  /* background-color: #b8c2cc !important; */
+  /* color: #fff; */
 }
 
 .btn-secondary:hover {
   border-color: #a9b5c1 !important;
-  color: #fff !important;
+  background-color: #f1f1f1;
+  color: black !important;
   box-shadow: 0 8px 25px -8px #b8c2cc;
 }
 
 .btn-secondary:focus,
 .btn-secondary:active {
-  color: #fff !important;
+  color: black !important;
+  background-color: #f1f1f1;
 }
 
 .btn-flat-secondary {

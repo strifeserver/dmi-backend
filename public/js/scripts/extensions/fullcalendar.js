@@ -36,12 +36,22 @@ document.addEventListener("DOMContentLoaded", function () {
         dataType: "json",
         success: function (response) {
           var events = response.result.map(function (schedule) {
+            console.log("LENGTH ", schedule.schedule_title.length);
+
+            // Rejected
+            // Success
+            // Pending
+            // Others/Appointments
+
+            let truncatedString = schedule.survey_code.substring(0, 5);
+            // console.log(truncatedString)
+            // console.log(truncatedString+' '+schedule.schedule_title)
             return {
               schedule_id_raw: schedule.id,
               schedule_id: schedule.survey_code,
               id: schedule.survey_code,
               survey_id: schedule.survey_id,
-              title: schedule.schedule_title,
+              title: truncatedString + " " + schedule.schedule_title,
               start: schedule.start_date,
               end: schedule.end_date,
               className: schedule.classes,
@@ -153,9 +163,7 @@ document.addEventListener("DOMContentLoaded", function () {
       $(".modal-calendar #cal-description").val(
         info.event.extendedProps.description
       );
-      $("#schedule_id_raw").val(
-        info.event._def.extendedProps.schedule_id_raw
-      );
+      $("#schedule_id_raw").val(info.event._def.extendedProps.schedule_id_raw);
       $(".modal-calendar .cal-submit-event").removeClass("d-none");
       $(".modal-calendar .remove-event").removeClass("d-none");
       $(".modal-calendar .cal-add-event").addClass("d-none");
@@ -273,7 +281,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // open add event modal on click of day
   $(document).on("click", ".fc-day", function () {
-    $(".modal-calendar").modal("show");
+    // click
+    let clickedDate = $(this).data("date");
+    let currentDate = new Date();
+    let parsedClickedDate = new Date(clickedDate);
+
+    // Compare the clicked date with the current date
+    if (parsedClickedDate < currentDate) {
+      // If the clicked date is in the past, do nothing (return) to prevent showing the modal
+    }else{
+
+      $(".modal-calendar").modal("show");
+    }
     $(".calendar-dropdown .dropdown-menu")
       .find(".selected")
       .removeClass("selected");

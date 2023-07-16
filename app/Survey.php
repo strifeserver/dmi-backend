@@ -18,6 +18,8 @@ class Survey extends Model
         "admin_survey_files",
         "customer_survey_files",
         "schedule_id",
+        "sqm_estimation",
+        "created_by",
         "status",
     ];
 
@@ -40,6 +42,8 @@ class Survey extends Model
             "admin_survey_files",
             "customer_survey_files",
             "schedule_id",
+            "sqm_estimation",
+            "created_by",
             "status",
         ];
 
@@ -245,7 +249,7 @@ class Survey extends Model
     //  * @return array
     //  * @param array $request
     //  */
-    public function store(array $request): array
+    public function store($request): array
     {
         $returns = [];
         $id = optional($request)->get('id', '');
@@ -313,21 +317,26 @@ class Survey extends Model
     //  */
     public function execute_update($request): array
     {
-        $id = $request['id'] ?? $request->input('id');
+        $id = $request['id'] ?? '';
+        $survey_id = $request['survey_id'] ?? '';
+
         $fields = $this->fillable;
 
-        $data = $this->where('id', $id)->first();
-        $request = collect($request);
-
-        if ($data) {
-            $submittedData = $request->only($fields);
-            $beforeUpdate = $data->toArray();
-            $submittedUpdate = $submittedData->toArray();
-            $execute = $data->update($submittedUpdate);
-            $auditing = null; // no update auditing defined
+        if ($id) {
+            $data = $this->where('id', $id)->first();
+        } else if ($survey_id) {
+            $data = $this->where('survey_id', $survey_id)->first();
         } else {
-            return ['result' => 'data does not exist'];
+            return ['result' => 'No id or survey_id provided'];
         }
+
+        if (!$data) {
+            return ['result' => 'Data does not exist'];
+        }
+
+        $submittedData = collect($request)->only($fields)->toArray();
+        $execute = $data->update($submittedData);
+        $auditing = null; // no update auditing defined
 
         return [
             'status' => $execute ? 1 : 0,
@@ -380,5 +389,9 @@ class Survey extends Model
     public function getCreatedAtAttribute($value)
     {
         return date('Y-m-d h:i:s A', strtotime($value));
+    }
+    public function setCreatedByAttribute($value)
+    {
+        $this->attributes['created_by'] = auth()->id();
     }
 }

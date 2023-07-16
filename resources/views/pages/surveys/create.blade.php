@@ -147,21 +147,14 @@
                                                 </div>
                                                 <div class="col-md-8">
                                                     <div class="position-relative has-icon-left">
-
-                                                        <input id="schedule_info"  type="text"
-                                                            class="form-control @error('schedule_info') is-invalid @enderror"
-                                                            name="schedule_info"
-                                                            value="{{ $mode == 'Update' ? @$edit->schedule_info : old('schedule_info') }}"
-                                                            autocomplete="schedule_info" autofocus>
-                                                        @error('schedule_info')
-                                                            <span class="invalid-feedback" role="alert">
-                                                                <strong>{{ $message }}</strong>
-                                                            </span>
-                                                        @enderror
+                                                        @if ($mode == 'Update')
+                                                            <input readonly class="form-control" type="text"
+                                                                value="{{ $mode == 'Update' ? @$edit->date : old('date') }}">
+                                                        @endif
+        
                                                         <div class="form-control-position">
                                                             <i class="feather icon-user"></i>
                                                         </div>
-
                                                     </div>
                                                 </div>
                                             </div>
@@ -322,11 +315,25 @@
                                         </div>
                                     </div>
                                     <hr>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <p style="font-weight:bold;">Booked Schedules</p>
+                                            <hr>
+                                            <input id="other_schedules" type="text" hidden class="form-control"
+                                                value="{{ $mode == 'Update' ? @$edit->other_schedules : old('other_schedules') }}">
+                                            <div id="booked_schedule_area" class="scrollable-area"></div>
+                                        </div>
+                                    </div>
+    
+
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div id="customer_survey_area"></div>
                                         </div>
                                     </div>
+
+                                    
 
                                     <hr>
 
@@ -553,7 +560,52 @@
       });
 
 
+      try {
+        var schedules = $('#other_schedules').val();
+        if (schedules) {
+            schedules = JSON.parse(schedules);
+        }
+        // Loop through the schedules data and append them to the 'booked_schedule_area' element
+        schedules.forEach(function(schedule) {
+            var scheduleTitle = schedule.schedule_title;
+            var date = schedule.date;
 
+            var scheduleLink = $('<a>')
+                .addClass('schedule-link')
+                .attr('href', '#')
+                .text('View Schedule: ' + scheduleTitle + ' ' + date)
+                .css('margin-bottom',
+                '0px !important') // Add this line to set margin-bottom to 0 with !important
+                .on('click', function() {
+                    showScheduleDialog(schedule);
+                });
+
+
+            $('#booked_schedule_area').append(
+                $('<p>').addClass('card-text').append(scheduleLink)
+            );
+        });
+
+        // Function to display the SweetAlert2 dialog with the schedule details
+        function showScheduleDialog(schedule) {
+            var scheduleTitle = schedule.schedule_title;
+            var date = schedule.date;
+            var endDate = schedule.end_date;
+            var description = schedule.description;
+
+            Swal.fire({
+                title: 'Schedule Details',
+                html: '<h2>' + scheduleTitle + '</h2>' +
+                    '<p style="text-align: left; margin-bottom: 0px !important;">Date: ' + date + '</p>' +
+                    '<p style="text-align: left;">End Date: ' + endDate + '</p>' +
+                    '<p style="text-align: left;">Description: ' + description + '</p>',
+                icon: 'info',
+                confirmButtonText: 'OK'
+            });
+        }
+    } catch (error) {
+
+    }
 
 </script>
 @endsection

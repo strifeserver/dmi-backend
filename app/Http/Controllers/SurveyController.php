@@ -17,7 +17,8 @@ use Helper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
-
+use App\ScheduleList;
+use DateTime;
 class SurveyController extends Controller implements Paginatable
 {
     use AcceptsPagination;
@@ -225,6 +226,28 @@ class SurveyController extends Controller implements Paginatable
         $page_variables = $this->pageService->page_variables(['controller_variables' => $this->controller_variables(), 'mode' => 'Update']);
         $edit = $this->db_table->findOrFail($id);
         $page_variables['edit'] = $edit;
+        if(isset($page_variables['edit']['schedule_id']) && $page_variables['edit']['schedule_id']){
+            $initial_schedule = ScheduleList::where('survey_id','=',$page_variables['edit']['schedule_id'])->where('schedule_type','appointment')->first();
+            if($initial_schedule){
+                $page_variables['edit']['date'] = $initial_schedule['date'];
+                $page_variables['edit']['schedule_raw'] = $initial_schedule['schedule_raw'];
+            }
+            $SurveyID = $edit['id'];
+            $plotted_schedules = ScheduleList::where('survey_id','=',$SurveyID)->where('schedule_type','scheduled')->get();
+            $plottedSched = [];
+            if($plotted_schedules){
+                foreach ($plotted_schedules as $key => $plot_schedule) {
+                    $plotScheduleInfo = [
+                        'schedule_title'=> $plot_schedule['schedule_title'] ?? 'Scheduled Appointment',
+                        'date'=> $plot_schedule['date'],
+                        'end_date'=> $plot_schedule['end_date'],
+                        'description'=> $plot_schedule['description'],
+                    ];
+                    $plottedSched[] = $plotScheduleInfo;
+                }
+            }
+            $page_variables['edit']['other_schedules'] = json_encode($plottedSched);
+        }
 
         return view($page_variables['edit_page'], $page_variables);
     }
@@ -277,6 +300,15 @@ class SurveyController extends Controller implements Paginatable
             'display_fields_only' => ['date'],
         ];
         $check_schedule = $this->ScheduleService->index($check_schedule_data);
+        if(!empty($check_schedule)){
+            foreach ($check_schedule['result'] as $key => $value) {
+                if(!empty($value['date'])){
+                    $date = new DateTime($value['date']);
+                    $formatted_date = $date->format('m-d-Y');
+                    $check_schedule['result'][$key]['date'] = $formatted_date;
+                }
+            }
+        }
 
         $returns = $check_schedule;
         $code = $returns['code'] ?? 400;
