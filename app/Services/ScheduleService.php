@@ -123,11 +123,13 @@ class ScheduleService
                 $payment_amount = $request['payment_amount'];
                 if ($payment_amount > 100) {
                     $createPaymentLink = $this->create_payment_link($request);
+        
                     // $createPaymentLink = [
                     //     'checkout_url' => 'https://pm.link/strifeserver/test/j7Lr371',
                     //     'reference_number' => 'j7Lr371',
                     //     'status' => '1',
                     // ];
+              
                     $paymentURL = $createPaymentLink['checkout_url'];
 
                 }
@@ -136,33 +138,33 @@ class ScheduleService
             if ($request['payment_gateway'] == 'paypal') {
                 $payment_amount = $request['payment_amount'];
                 if ($payment_amount > 100) {
-                    // $createPaymentLink = $this->create_payment_link($request);
-                    $PaypalResult = [
-                        "id" => "6XK7750295684622V",
-                        "status" => "CREATED",
-                        "links" => [
-                            [
-                                "href" => "https://api.sandbox.paypal.com/v2/checkout/orders/6XK7750295684622V",
-                                "rel" => "self",
-                                "method" => "GET",
-                            ],
-                            [
-                                "href" => "https://www.sandbox.paypal.com/checkoutnow?token=6XK7750295684622V",
-                                "rel" => "approve",
-                                "method" => "GET",
-                            ],
-                            [
-                                "href" => "https://api.sandbox.paypal.com/v2/checkout/orders/6XK7750295684622V",
-                                "rel" => "update",
-                                "method" => "PATCH",
-                            ],
-                            [
-                                "href" => "https://api.sandbox.paypal.com/v2/checkout/orders/6XK7750295684622V/capture",
-                                "rel" => "capture",
-                                "method" => "POST",
-                            ],
-                        ],
-                    ];
+                    $createPaymentLink = $this->create_payment_link($request);
+                    // $PaypalResult = [
+                    //     "id" => "6XK7750295684622V",
+                    //     "status" => "CREATED",
+                    //     "links" => [
+                    //         [
+                    //             "href" => "https://api.sandbox.paypal.com/v2/checkout/orders/6XK7750295684622V",
+                    //             "rel" => "self",
+                    //             "method" => "GET",
+                    //         ],
+                    //         [
+                    //             "href" => "https://www.sandbox.paypal.com/checkoutnow?token=6XK7750295684622V",
+                    //             "rel" => "approve",
+                    //             "method" => "GET",
+                    //         ],
+                    //         [
+                    //             "href" => "https://api.sandbox.paypal.com/v2/checkout/orders/6XK7750295684622V",
+                    //             "rel" => "update",
+                    //             "method" => "PATCH",
+                    //         ],
+                    //         [
+                    //             "href" => "https://api.sandbox.paypal.com/v2/checkout/orders/6XK7750295684622V/capture",
+                    //             "rel" => "capture",
+                    //             "method" => "POST",
+                    //         ],
+                    //     ],
+                    // ];
 
                     $paymentURL = $PaypalResult['links'][1];
                 }
@@ -216,18 +218,21 @@ class ScheduleService
         $paymentSetting = app(PaymentSettingService::class);
         $createLink = $paymentSetting->create_paymongo_link($payMongoValue, $description, $remarks);
         if ($createLink['status'] == 200) {
-            $checkoutUrl = @$createLink['body']['attributes']['checkout_url'];
+            $checkoutUrl = @$createLink['body']['data']['attributes']['redirect']['checkout_url'];
+            $failedurl = @$createLink['body']['data']['attributes']['redirect']['failed'];
+            $successurl = @$createLink['body']['data']['attributes']['redirect']['success'];
+            // $checkoutUrl = @$createLink['body']['attributes']['checkout_url'];
+
             if (!empty($checkoutUrl)) {
                 $returns['checkout_url'] = @$checkoutUrl;
-                $returns['reference_number'] = @$createLink['body']['attributes']['reference_number'];
+                $returns['reference_number'] = @$createLink['body']['data']['id'];
                 $returns['status'] = 1;
 
             }
         } else {
             $returns['errors'] = $createLink['errors'];
         }
-        // print_r($returns);
-        // exit;
+
         return $returns;
     }
 

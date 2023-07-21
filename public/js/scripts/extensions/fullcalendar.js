@@ -173,8 +173,18 @@ document.addEventListener("DOMContentLoaded", function () {
         .removeClass("selected");
       // console.log(info.event._def.extendedProps);
       $("#survey-id-list").val(info.event.id).trigger("change");
-
+      
       var eventCategory = info.event.extendedProps.dataEventColor;
+        // alert(eventCategory)
+      // modal-footer
+      // $(".modal-footer").css("display", "none");
+      $(".modal-footer").hide();
+      console.log(info.event.end)
+      if(info.event.extendedProps.length > 0){
+        alert('zzz')
+        console.log(info.event.extendedProps)
+      }
+
       var eventText = categoryText[eventCategory];
       $(".modal-calendar .chip-wrapper .chip").remove();
       $(".modal-calendar .chip-wrapper").append(
@@ -290,7 +300,8 @@ document.addEventListener("DOMContentLoaded", function () {
     if (parsedClickedDate < currentDate) {
       // If the clicked date is in the past, do nothing (return) to prevent showing the modal
     }else{
-
+      // $(".modal-footer").css("display", "none");
+      $(".modal-footer").show();
       $(".modal-calendar").modal("show");
     }
     $(".calendar-dropdown .dropdown-menu")

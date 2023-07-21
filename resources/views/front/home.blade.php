@@ -15,12 +15,11 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>Core - @yield('title') </title>
     <link rel="shortcut icon" type="image/x-icon" href="images/logo/favicon.ico">
-
     {{-- Include core + vendor Styles --}}
     @include('panels/styles')
 
@@ -30,8 +29,15 @@
     @extends($configData['mainLayoutType'] === 'horizontal' ? 'layouts.frontLayoutMaster' : 'layouts.frontLayoutMaster')
 @endisset
 
-
 @section('content')
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.0/dist/aos.css" />
+
+    <script src="https://unpkg.com/aos@2.3.0/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 1200,
+        })
+    </script>
     <style>
         body {
             overflow-x: hidden;
@@ -148,7 +154,7 @@
 
         .indented-paragraph {
             font-size: 18px;
-            color:white;
+            color: white;
             margin-left: 20px;
             /* Adjust the indentation value as needed */
         }
@@ -177,33 +183,36 @@
             }
         }
     </style>
-    <section class="filler">
+    <section style="height:50px;">
 
     </section>
     <section id="home_section">
+        <div class="row">
+            <div class="col-lg-12 col-md-6 col-sm-12">
+                <div class="parallax" style=" " data-aos="fade-down">
 
-        <div class="parallax" style=" ">
+                    {{-- <div class="row parallax-caption" > --}}
+                    <div data-aos="fade-left" class="col-sm-1 col-md-4 col-lg-6  parallax-caption""
+                        style="background-color:rgb(66, 127, 38); line-height: 2;">
+                        <h1 style="color:white; opacity: 1 !important; text-align:center; line-height: 2;">
+                            Welcome to DMI Survey Site</h1>
+                    </div>
 
-            {{-- <div class="row parallax-caption" > --}}
-            <div class="col-md-6  parallax-caption"" style="background-color:rgb(66, 127, 38); line-height: 2;">
-                <h1 style="color:white; opacity: 1 !important; text-align:center; line-height: 2;">
-                    Welcome to DMI Survey Site</h1>
-            </div>
+                    {{-- </div> --}}
+                    <div class="fade-background" data-aos="fade-right">
+                        <div style="margin: 30px;">
+                            <center>
 
-            {{-- </div> --}}
-            <div class="fade-background">
-                <div style="margin: 30px;">
-                    <center>
-
-                        <p><strong>We are here to accomodate your needs. </strong></p>
-                        <p><strong>Click sign up to start.</strong></p>
-                        <button class="btn btn-outline-secondary waves-effect waves-light text-color"
-                            style="color:black !important; background-color:beige !important;" id="sign_up_btn">Sign
-                            Up</button>
-                    </center>
+                                <p><strong>We are here to accomodate your needs. </strong></p>
+                                <p><strong>Click sign up to start.</strong></p>
+                                <button class="btn btn-outline-secondary waves-effect waves-light text-color"
+                                    style="color:black !important; background-color:beige !important;" id="sign_up_btn">Sign
+                                    Up</button>
+                            </center>
+                        </div>
+                    </div>
                 </div>
             </div>
-
         </div>
 
     </section>
@@ -213,23 +222,30 @@
     </section>
 
 
-    <section id="contact_us_section">
+    <section id="contact_us_section" data-aos="fade-up">
+        <div class="row">
+            <div class="col-lg-12 col-md-6 col-sm-3">
+                <center>
+
+                    <h1>Contact Us</h1>
+                    <hr>
+                    <img class="img-fluid" src="images/contactus.png" alt="">
+                </center>
+            </div>
+        </div>
         <br>
         <br>
         <br>
 
-        <center>
-            <h1>Contact Us</h1>
-            <hr>
-            <img src="images/contactus.png" alt="">
-        </center>
+
     </section>
 
     <section class="filler">
+        <hr>
 
     </section>
 
-    <section id="about_us_section" class="defaultextcolor">
+    <section id="about_us_section" class="defaultextcolor" data-aos="fade-up">
         <br>
         <br>
         <br>
@@ -241,9 +257,9 @@
                 </center>
                 <hr>
             </div>
-            
+
             <div class="col-md-11" style="margin-left: 50px; background-color: #8080809e; margin-top: 10px;">
-                <p class="indented-paragraph">
+                <p class="indented-paragraph" data-aos="fade-left">
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>DMI-MEC</strong> was established to
                     provide advice and assistance that is responsive to the
                     needs of
@@ -251,7 +267,7 @@
                     of its key staff.
                 <p>
 
-                <p class="indented-paragraph">
+                <p class="indented-paragraph" data-aos="fade-right">
 
                     Its services vary which include planning and feasibility studies; detailed
                     architectural and engineering design; organization and management, and training.
@@ -261,11 +277,11 @@
                     environmental protection.
                 </p>
 
-                <p class="indented-paragraph">
+                <p class="indented-paragraph" data-aos="fade-left">
 
                 </p>
 
-                <p class="indented-paragraph">
+                <p class="indented-paragraph" data-aos="fade-right">
                     Services are offered in every phase of project development from
                     pre-feasibility
                     and feasibility studies, master plan preparation, detailed engineering design, to construction
@@ -273,14 +289,17 @@
                     and management.
                 </p>
 
-                <p class="indented-paragraph">
+                <p class="indented-paragraph" data-aos="fade-left">
                     Our Key Staff include Engineer Planners, Architects, Economists, Financial Experts,
                     Surveyors, Cartographers and Computer Experts, among others.
                 </p>
 
-            </div>
-            <div class="col-md-6 offset-md-3" style="background-color: #8080809e;">
-                <p class="indented-paragraph">
+
+                <br>
+                <br>
+                <br>
+                <br>
+                <p class="indented-paragraph" data-aos="fade-right">
 
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>The FIRM</strong> also maintains a pool of
                     Consultants compose of Civil Engineers, Hydraulic
@@ -289,11 +308,17 @@
                     Planners, Urban Planners and Environmental Experts.
                 <p>
 
+
             </div>
+
         </div>
 
     </section>
-
+    <section class="filler">
+    </section>
+    <section class="filler" style="background-color: #658347;">
+        <hr>
+    </section>
 
     <script>
         function startCarousel() {
@@ -315,41 +340,54 @@
 
         startCarousel();
 
-        document.addEventListener('DOMContentLoaded', function() {
-            function scrollToSection(buttonId, sectionId) {
-                var button = document.getElementById(buttonId);
-                var section = document.getElementById(sectionId);
-
-                button.addEventListener('click', function() {
-                    if (section) {
-                        var scrollOptions = {
-                            behavior: 'smooth',
-                            block: 'start'
-                        };
-
-                        if (buttonId === 'home_btn') {
-                            window.scrollTo({
-                                top: 0, // Scroll to the top of the page
-                                ...scrollOptions
-                            });
-                        } else {
-                            window.scrollTo({
-                                top: section.offsetTop,
-                                ...scrollOptions
-                            });
-                        }
-                    }
-                });
-            }
-
-            scrollToSection('home_btn', 'home_section');
-            scrollToSection('contact_btn', 'contact_us_section');
-            scrollToSection('about_us_btn', 'about_us_section');
-        });
-        document.getElementById('sign_up_btn').addEventListener('click', function() {
-        window.location.href = '/register';
-    });
 
         // 
+
+
+
+
+
+
+        // Disable horizontal swipe behavior on mobile
+        document.addEventListener('touchstart', handleTouchStart, false);
+        document.addEventListener('touchmove', handleTouchMove, false);
+
+        let xDown = null;
+        let yDown = null;
+
+        function handleTouchStart(evt) {
+            xDown = evt.touches[0].clientX;
+            yDown = evt.touches[0].clientY;
+        }
+
+        function handleTouchMove(evt) {
+            if (!xDown || !yDown) {
+                return;
+            }
+
+            const xUp = evt.touches[0].clientX;
+            const yUp = evt.touches[0].clientY;
+
+            const xDiff = xDown - xUp;
+            const yDiff = yDown - yUp;
+
+            if (Math.abs(xDiff) > Math.abs(yDiff)) {
+                // Most significant direction
+                evt.preventDefault();
+            }
+
+            // Reset values
+            xDown = null;
+            yDown = null;
+        }
+
+
+        try {
+            document.getElementById('sign_up_btn').addEventListener('click', function() {
+                window.location.href = '/register';
+            });
+        } catch (error) {
+
+        }
     </script>
 @endsection

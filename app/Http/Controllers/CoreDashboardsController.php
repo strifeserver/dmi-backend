@@ -188,16 +188,10 @@ class CoreDashboardsController extends Controller
 
     public function schedules()
     {
-
-        // $scheduleParams = [];
-        // echo '<pre>';
         $ScheduleService = app(ScheduleService::class);
         $schedules = $ScheduleService->index([]);
 
-        // $results = $schedules['result'];
-
         $schedules["result"] = array_map(function ($item) {
-            // $item["start_date"] = $item["date"];
             if (empty($item["end_date"])) {
                 $item["end_date"] = $item["start_date"];
             }
@@ -216,13 +210,9 @@ class CoreDashboardsController extends Controller
 
     public function scheduleInsert(request $request)
     {
-
         $ScheduleService = app(ScheduleService::class);
-
         $execution = $ScheduleService->store($request->all());
-        print_r($execution);
-        exit;
-        // return $execution;
+        return $execution;
 
     }
     public function scheduleUpdate(request $request)

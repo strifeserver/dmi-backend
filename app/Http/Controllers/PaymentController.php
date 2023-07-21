@@ -7,6 +7,8 @@ use App\Services\PaymentSettingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
+
+
 class PaymentController extends Controller
 {
     public function __construct(PaymentSettingService $paymentSetting)
@@ -123,6 +125,63 @@ class PaymentController extends Controller
             // Payment failed or other error occurred
             // Handle the error case appropriately
         }
+    }
+
+
+    public function paymongoGcashInitial(){
+
+        
+        // Basic c2tfdGVzdF93WnJ5c25DZ1lVNXJVQnZZYjFFY1JwMU46'
+
+        // Replace 'KEYKEYKEY' with your actual authorization key
+        $authorizationKey = 'c2tfdGVzdF93WnJ5c25DZ1lVNXJVQnZZYjFFY1JwMU46';
+        
+        $response = Http::withHeaders([
+                'accept' => 'application/json',
+                'authorization' => 'Basic ' . $authorizationKey,
+                'content-type' => 'application/json',
+            ])
+            ->post('https://api.paymongo.com/v1/sources', [
+                'data' => [
+                    'attributes' => [
+                        'amount' => 10000,
+                        'redirect' => [
+                            'failed' => 'http://127.0.0.1:8000/paymongo_cancel',
+                            'success' => 'http://127.0.0.1:8000/paymongo_success',
+                        ],
+                        'type' => 'gcash',
+                        'currency' => 'PHP',
+                    ],
+                ],
+            ]);
+        return $response;
+        // Handle the response
+        if ($response->successful()) {
+            // Request was successful
+            $responseData = $response->json();
+            // Process the $responseData as needed
+        } else {
+            // Request failed
+            $errorCode = $response->status();
+            // Handle the error
+        }
+        
+
+
+
+
+
+    }
+
+    public function paymongoGcashSuccess(){
+
+        return view('/pages/payment/payment_success', [
+        ]);
+    }
+
+    public function paymongoGcashCancel(){
+
+
     }
 
 }

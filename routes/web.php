@@ -123,3 +123,9 @@ Route::get('/home', 'HomeController@homepage');
 
 Route::get('/paypal_success', 'PaypalController@success')->name('paypal_success');
 Route::get('/paypal_cancel', 'PaypalController@cancel')->name('paypal_cancel');
+
+
+
+Route::get('/paymongo', 'PaymentController@paymongoGcashInitial');
+Route::get('/paymongo_success', 'PaymentController@paymongoGcashSuccess');
+Route::get('/paymongo_cancel', 'PaymentController@paymongoGcashCancel');

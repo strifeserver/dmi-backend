@@ -199,7 +199,10 @@
             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-sm" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h4 class="modal-title text-text-bold-600" id="cal-modal">Add Event</h4>
+                        <h4 class="modal-title text-text-bold-600" id="cal-modal">
+                            {{-- title --}}
+
+                        </h4>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">×</span>
                         </button>
@@ -283,7 +286,7 @@
 
                             <fieldset id="payment_input" class="form-label-group payment_amount_prompt">
                                 <p>Payment Amount</p>
-                                <input type="text" class="form-control" id="payment_amount" placeholder="0.00">
+                                <input type="numeric" class="form-control" id="payment_amount" placeholder="0.00">
                                 <label for="payment_amount">Payment Amount</label>
                             </fieldset>
 
