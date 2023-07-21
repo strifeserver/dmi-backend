@@ -42,8 +42,15 @@ document.addEventListener("DOMContentLoaded", function () {
             // Success
             // Pending
             // Others/Appointments
-
-            let truncatedString = schedule.survey_code.substring(0, 5);
+            let scheduletitle = '';
+            try {
+              let truncatedString = schedule.survey_code.substring(0, 5);
+              scheduletitle = truncatedString + " " + schedule.schedule_title
+            } catch (error) {
+              scheduletitle = schedule.schedule_title
+              
+            }
+   
             // console.log(truncatedString)
             // console.log(truncatedString+' '+schedule.schedule_title)
             return {
@@ -51,7 +58,7 @@ document.addEventListener("DOMContentLoaded", function () {
               schedule_id: schedule.survey_code,
               id: schedule.survey_code,
               survey_id: schedule.survey_id,
-              title: truncatedString + " " + schedule.schedule_title,
+              title: scheduletitle,
               start: schedule.start_date,
               end: schedule.end_date,
               className: schedule.classes,
