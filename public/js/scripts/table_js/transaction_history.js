@@ -102,10 +102,19 @@ if(table_version == 'v2'){
         },
         cellRenderer: function (params) {
           if (!params.data) return; // Not fully loaded yet
-          const url = params.routes.edit.replace(':id', params.value);
+          let url = params.routes.edit.replace(':id', params.value);
           const root = document.createElement('div');
           const access = params.controls;
-  
+
+          var currentUrl = window.location.href;
+          var currentUrl = currentUrl.split('/');
+          const urlpath = currentUrl[3] 
+          console.log(urlpath);
+          if(urlpath == 'transactions'){
+            overrideUrl = url.split('/');
+            overrideUrl[3] = 'transactions';
+            url = overrideUrl.join('/');
+          }
           if (access.edit) {
             root.appendChild(CORE_Framework.createEdit({ href: url }));
           }

@@ -349,4 +349,15 @@ class transaction extends Model
     {
         return date('Y-m-d h:i:s A', strtotime($value));
     }
+
+
+    public function getStatusAttribute($value)
+    {
+        if($value == 0){
+            $value = 'Pending';
+        }else{
+            $value = 'Paid';
+        }
+        return $value;
+    }
 }

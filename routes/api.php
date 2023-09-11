@@ -51,3 +51,5 @@ Route::GET('scheduled_dates', 'SurveyController@scheduled_dates');
 Route::post('/schedule_insert', 'CoreDashboardsController@scheduleInsert');
 Route::get('/paypal_payment', 'PaypalController@payment');
 Route::POST('/workerupdatestatus', 'WorkersController@workerCheckUpdate');
+Route::get('/smstest', 'SmsController@SmsProcess');
+Route::post('/update_survey', 'SurveyController@updateStatus');

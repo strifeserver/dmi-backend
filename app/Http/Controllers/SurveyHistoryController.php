@@ -7,9 +7,11 @@ use App\Http\Controllers\Pagination\AcceptsPagination;
 use App\Http\Controllers\Pagination\PageData;
 use App\Http\Controllers\Pagination\Paginatable;
 use App\Http\Requests\SurveyPostRequest;
+use App\ScheduleList;
 use App\Services\AuthService;
 use App\Services\PageService;
 use App\Services\ScheduleService;
+use App\Services\SmsService;
 use App\Services\SurveyService;
 use App\Support\AgGrid;
 use App\Survey;
@@ -17,11 +19,8 @@ use App\transaction;
 use Helper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Storage;
-use App\ScheduleList;
 
 class SurveyHistoryController extends Controller implements Paginatable
-
 {
     use AcceptsPagination;
 
@@ -97,7 +96,7 @@ class SurveyHistoryController extends Controller implements Paginatable
                 }
                 return $query;
             })
-            ->where('created_by','=',auth()->id())
+            ->where('created_by', '=', auth()->id())
             ->paginate($end)
             ->toArray();
         $total = $rows['total'];
@@ -234,8 +233,20 @@ class SurveyHistoryController extends Controller implements Paginatable
                 'created_by' => auth()->id(),
                 'customer_survey_files' => $request->file('customer_survey_files'),
             ];
-       
-     
+
+            if (!empty(request('mobile_number'))) {
+                if (!preg_match('/^(639|09)\d{9}$/', request('mobile_number'))) {
+
+                    $SmsService = app(SmsService::class);
+                    $smsSendData = [
+                        'mobile_number' => request('mobile_number'),
+                        'message' => 'a Survey has been created with the Survey ID of' . $survey_id,
+                    ];
+                    $smsNotification = $SmsService->smsSend($smsSendData);
+                }
+
+            }
+
             $execution = $this->SurveyService->store($to_validate);
             $requestDate = request('requested_schedule');
             $dateTime = \DateTime::createFromFormat('m-d-Y', $requestDate);
@@ -248,7 +259,7 @@ class SurveyHistoryController extends Controller implements Paginatable
                 'survey_tracking_id' => $survey_id,
                 'requested_by' => request('name'),
                 'approved_by' => request('approved_by'),
-                'schedule_raw' => $convertedDate.' 00:00:00',
+                'schedule_raw' => $convertedDate . ' 00:00:00',
                 'date' => $convertedDate,
                 'end_date' => $convertedDate,
                 'customer_survey_files' => $request->file('customer_survey_files'),
@@ -258,14 +269,13 @@ class SurveyHistoryController extends Controller implements Paginatable
             ];
 
             $createSchedule = $this->ScheduleService->store($to_validate);
-            if(isset($createSchedule['result']) && !empty($createSchedule['result']['id'])){
+            if (isset($createSchedule['result']) && !empty($createSchedule['result']['id'])) {
                 $UpdateStructure = [
-                    'survey_id'=> $survey_id,
-                    'schedule_id'=> $createSchedule['result']['id']
+                    'survey_id' => $survey_id,
+                    'schedule_id' => $createSchedule['result']['id'],
                 ];
                 $execution = $this->SurveyService->update($UpdateStructure);
             }
-      
 
             if ($execution['status'] == 'success' && $createSchedule['status'] == 'success') {
                 $response = Helper::apiResponse('success', 200, 'Survey Successfully Created', ['survey_id' => $survey_id, 'debug' => json_encode($check_schedule)]);
@@ -274,7 +284,7 @@ class SurveyHistoryController extends Controller implements Paginatable
             }
 
         }
-        
+
         return redirect()
             ->route($page_variables['update_page'])
             ->with(
@@ -283,46 +293,44 @@ class SurveyHistoryController extends Controller implements Paginatable
             );
     }
 
-
     public function edit($id)
     {
         $ctrl_var = $this->controller_variables();
         $page_variables = $this->pageService->page_variables(['controller_variables' => $this->controller_variables(), 'mode' => 'Update']);
         $edit = $this->db_table->findOrFail($id);
         $page_variables['edit'] = $edit;
-        
-        if(isset($page_variables['edit']['schedule_id']) && $page_variables['edit']['schedule_id']){
-            $initial_schedule = ScheduleList::where('survey_id','=',$page_variables['edit']['schedule_id'])->where('schedule_type','appointment')->first();
-        
-            if(!empty($initial_schedule)){
+
+        if (isset($page_variables['edit']['schedule_id']) && $page_variables['edit']['schedule_id']) {
+            $initial_schedule = ScheduleList::where('survey_id', '=', $page_variables['edit']['schedule_id'])->where('schedule_type', 'appointment')->first();
+
+            if (!empty($initial_schedule)) {
                 $page_variables['edit']['date'] = $initial_schedule['date'];
-              
+
                 $page_variables['edit']['schedule_raw'] = $initial_schedule['schedule_raw'] ?? $initial_schedule['date'];
-               
+
             }
             // echo '<pre>';
             // print_r($page_variables['edit']['schedule_id']);
             // exit;
             $SurveyID = $edit['id'];
-            $plotted_schedules = ScheduleList::where('survey_id','=',$SurveyID)->where('schedule_type','scheduled')->get();
+            $plotted_schedules = ScheduleList::where('survey_id', '=', $SurveyID)->where('schedule_type', 'scheduled')->get();
             $plottedSched = [];
-            if($plotted_schedules){
+            if ($plotted_schedules) {
                 foreach ($plotted_schedules as $key => $plot_schedule) {
                     $schedule_id = $plot_schedule->survey_tracking_id;
-                    
-            
+
                     $plotScheduleInfo = [
-                        'schedule_title'=> $plot_schedule['schedule_title'] ?? 'Scheduled Appointment',
-                        'date'=> $plot_schedule['date'],
-                        'end_date'=> $plot_schedule['end_date'],
-                        'description'=> $plot_schedule['description'],
+                        'schedule_title' => $plot_schedule['schedule_title'] ?? 'Scheduled Appointment',
+                        'date' => $plot_schedule['date'],
+                        'end_date' => $plot_schedule['end_date'],
+                        'description' => $plot_schedule['description'],
                     ];
-                    $getPaymentUrl = transaction::where('survey_id','=',$schedule_id)->first();
-                    if($getPaymentUrl){
+                    $getPaymentUrl = transaction::where('survey_id', '=', $schedule_id)->first();
+                    if ($getPaymentUrl) {
                         $plotScheduleInfo['payment_url'] = $getPaymentUrl->payment_url;
                         $plotScheduleInfo['requested_amount'] = $getPaymentUrl->requested_amount;
                     }
-           
+
                     $plottedSched[] = $plotScheduleInfo;
                 }
             }
@@ -412,9 +420,8 @@ class SurveyHistoryController extends Controller implements Paginatable
                 'customer_survey_files' => $request->file('customer_survey_files'),
             ];
 
-            
             $execution = $this->SurveyService->store($to_validate);
-     
+
             $to_validate = [
                 'survey_tracking_id' => $survey_id,
                 'survey_id' => $execution['result']['id'],
@@ -423,7 +430,7 @@ class SurveyHistoryController extends Controller implements Paginatable
                 'schedule_raw' => date(request('requested_schedule')),
                 'date' => date(request('requested_schedule')),
                 'customer_survey_files' => $request->file('customer_survey_files'),
-                'classes'=>'chip chip-warning',
+                'classes' => 'chip chip-warning',
                 'time' => null,
                 'status' => 1,
             ];

@@ -13,6 +13,7 @@ use App\Services\TransactionService;
 use App\Support\AgGrid;
 use App\transaction;
 use App\Survey;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use App\Http\Controllers\Pagination\Paginatable;
@@ -78,12 +79,15 @@ class TransactionHistoryController extends Controller implements Paginatable
     public function getPage(int $start, int $end,  ? array $sortModel, ?object $filterModel) : PageData
     {
 
+        $currentId = auth()->id();
+        $checkAccessLevel = User::where('id','=',$currentId)->first();
+        $accessLevel = $checkAccessLevel->access_level;
         $getSurveyIDs = Survey::select('survey_id')->where('created_by', '=', auth()->id())->get();
         if(!empty($getSurveyIDs)){
             $surveyIdList = $getSurveyIDs->toArray();
         }
-  
-        $rows = $this->db_table->select()
+
+        $rows = $this->db_table->select('id','survey_id','requested_amount','tagged_schedule_id','status','created_at','updated_at')
             ->when($filterModel, function ($query, $filterModel) {
                 foreach ($filterModel as $key => $value) {
                     if ($key == 'created_at') {
@@ -98,8 +102,10 @@ class TransactionHistoryController extends Controller implements Paginatable
                 }
                 return $query;
             })
-            ->whereIn('survey_id', $surveyIdList)
-            // ->where('created_by','=',auth()->id())
+            // ->whereIn('survey_id', $surveyIdList)
+            ->when($accessLevel != 1, function ($query) use ($surveyIdList) {
+                $query->whereIn('survey_id', $surveyIdList);
+            })
             ->paginate($end)
             ->toArray();
         $total = $rows['total'];
@@ -130,7 +136,7 @@ class TransactionHistoryController extends Controller implements Paginatable
         return [
             ['table_name' => 'survey_id', 'headerName' => 'SURVEY ID', 'is_display' => true, 'column_width' => 'W_WIDE'],
             ['table_name' => 'requested_amount', 'headerName' => 'REQUESTED AMOUNT', 'is_display' => true, 'column_width' => 'W_WIDE'],
-            ['table_name' => 'payment_url', 'headerName' => 'PAYMENT URL', 'is_display' => true, 'column_width' => 'W_WIDE'],
+            // ['table_name' => 'payment_url', 'headerName' => 'PAYMENT URL', 'is_display' => true, 'column_width' => 'W_WIDE'],
             ['table_name' => 'created_at', 'headerName' => 'DATE CREATED', 'is_display' => true, 'column_width' => 'W_WIDE'],
             ['table_name' => 'updated_at', 'headerName' => 'DATE UPDATED', 'is_display' => true, 'column_width' => 'W_WIDE'],
         ];
@@ -231,6 +237,17 @@ class TransactionHistoryController extends Controller implements Paginatable
         $page_variables = $this->pageService->page_variables(['controller_variables' => $this->controller_variables(), 'mode' => 'Update']);
         $edit = $this->db_table->findOrFail($id);
         $page_variables['edit'] = $edit;
+        $currentId = auth()->id();
+        $checkAccessLevel = User::where('id','=',$currentId)->first();
+        $accessLevel = $checkAccessLevel->access_level;
+        if($accessLevel == 1){
+            $page_variables['is_admin'] = true;
+        }else{
+            $page_variables['is_admin'] = false;
+        }
+        // echo '<pre>';
+        // print_r($page_variables);
+        // exit;
 
         return view($page_variables['edit_page'], $page_variables);
     }
