@@ -735,3 +735,13 @@
     </script>
 @endsection
 @endif
+@if($access_level == 3)
+    <input id="acclvl" type="text" value="{{$access_level}}" hidden>
+
+@section('page-script')
+<script>
+    window.location.href = "/survey_history";
+</script>
+@endsection
+
+@endif
