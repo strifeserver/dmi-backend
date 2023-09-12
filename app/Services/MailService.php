@@ -147,7 +147,7 @@ class MailService
                     $emailOutbox->email = json_encode($to);
                     $emailOutbox->subject = $title;
                     $emailOutbox->content = $body;
-                    $emailOutbox->remarks = json_encode($details);
+                    // $emailOutbox->remarks = json_encode($details);
                     $emailOutbox->save();
                 } catch (\Throwable $th) {
                     //throw $th;
