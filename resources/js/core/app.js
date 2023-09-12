@@ -415,7 +415,7 @@
     
     // Or you can redirect to a URL
     // window.location.href = "https://www.example.com";
-    window.location.href = "/survey_history";
+    window.location.href = "/home";
   });
   // window.location.href = "/survey_history";
   $(document).on("click", ".menu-toggle, .modern-nav-toggle", function (e) {

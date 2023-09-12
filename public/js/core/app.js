@@ -681,7 +681,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         
         // Or you can redirect to a URL
         // window.location.href = "https://www.example.com";
-        window.location.href = "/survey_history";
+        window.location.href = "/home";
       });
       $(document).on("click", ".menu-toggle, .modern-nav-toggle", function (e) {
         e.preventDefault();
