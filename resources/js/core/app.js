@@ -409,10 +409,18 @@
       });
     }
   }
-
+  $("#logo").click(function() {
+    // Your code to execute when the "logo" element is clicked goes here
+    // For example, you can alert a message
+    
+    // Or you can redirect to a URL
+    // window.location.href = "https://www.example.com";
+    window.location.href = "/survey_history";
+  });
+  // window.location.href = "/survey_history";
   $(document).on("click", ".menu-toggle, .modern-nav-toggle", function (e) {
     e.preventDefault();
-
+    console.log('click')
     if ($("#logo").hasClass("toggle1")) {
       console.log('small logo');
       $("#logo").attr("src", "/images/tinylogo.png");
