@@ -6,168 +6,189 @@
     Author: Pixinvent
     Author URL: hhttp://www.themeforest.net/user/pixinvent
 ==========================================================================================*/
-(function(window, document, $) {
-    'use strict';
+(function (window, document, $) {
+  "use strict";
 
-    /*******    Pick-a-date Picker  *****/
-    // Basic date
-    $('.pickadate').pickadate();
+  /*******    Pick-a-date Picker  *****/
+  // Basic date
+  $(".pickadate").pickadate();
 
-    // Format Date Picker
-    $('.format-picker').pickadate({
-        format: 'mm-dd-yyyy',
-        selectMonths: true,
-        selectYears: true
-    });
-    // Format Date Picker-new date only
-    var minDate = new Date();
-    minDate.setDate(minDate.getDate() + 1);
-    
-    // Fetch data from the API endpoint
-    fetch('/api/scheduled_dates')
-      .then(response => response.json())
-      .then(data => {
-        if (data.status === "success" && data.result) {
-          // Extract the dates from the API response
-          var scheduledDates = data.result.map(item => item.date);
-          
-          // Convert and format the dates as required
-          var disabledDates = scheduledDates.map(dateString => {
-            var dateParts = dateString.split('-');
+  // Format Date Picker
+  $(".format-picker").pickadate({
+    format: "mm-dd-yyyy",
+    selectMonths: true,
+    selectYears: true,
+  });
+  // Format Date Picker-new date only
+  var minDate = new Date();
+  minDate.setDate(minDate.getDate() + 1);
+
+  // Fetch data from the API endpoint
+  fetch("/api/scheduled_dates")
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.status === "success" && data.result) {
+        // Extract the dates from the API response
+        var scheduledDates = data.result.map((item) => item.date);
+
+        // Convert and format the dates as required
+        var disabledDates = scheduledDates.map((dateString) => {
+          if (dateString !== null) {
+            var dateParts = dateString.split("-");
             var year = parseInt(dateParts[2], 10);
             var month = parseInt(dateParts[0], 10) - 1; // Subtract 1 to account for zero-based months
             var day = parseInt(dateParts[1], 10);
             return [year, month, day];
-          });
-          
-          // Initialize the pickadate plugin with disabled dates
-          $('.format-picker-new-date').pickadate({
-            format: 'mm-dd-yyyy',
-            selectMonths: true,
-            selectYears: true,
-            disable: disabledDates,
-            min: minDate
-          });
-        }
-      })
-      .catch(error => {
-        console.error('Error fetching scheduled dates:', error);
-      });
-    
+          } else {
+            console.log("dateString is null");
+          }
+        });
 
-    // Date limits
-    $('.pickadate-limits').pickadate({
-        min: [2019,3,20],
-        max: [2019,5,28]
-    });
-    
-    // Disabled Dates & Weeks
-    
-    $('.pickadate-disable').pickadate({
-        disable: [
-            1,
-            [2019,3,6],
-            [2019,3,20]
-        ]
+        // Initialize the pickadate plugin with disabled dates
+        $(".format-picker-new-date").pickadate({
+          format: "mm-dd-yyyy",
+          selectMonths: true,
+          selectYears: true,
+          disable: disabledDates,
+          min: minDate,
+        });
+      }
+    })
+    .catch((error) => {
+      console.error("Error fetching scheduled dates:", error);
     });
 
-    // Picker Translations
-    $( '.pickadate-translations' ).pickadate({
-        formatSubmit: 'dd/mm/yyyy',
-        monthsFull: [ 'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre' ],
-        monthsShort: [ 'Jan', 'Fev', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Aou', 'Sep', 'Oct', 'Nov', 'Dec' ],
-        weekdaysShort: [ 'Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam' ],
-        today: 'aujourd\'hui',
-        clear: 'clair',
-        close: 'Fermer'
-    });
+  // Date limits
+  $(".pickadate-limits").pickadate({
+    min: [2019, 3, 20],
+    max: [2019, 5, 28],
+  });
 
-    // Month Select Picker
-    $('.pickadate-months').pickadate({
-        selectYears: false,
-        selectMonths: true
-    });
+  // Disabled Dates & Weeks
 
-    // Month and Year Select Picker
-    $('.pickadate-months-year').pickadate({
-        selectYears: true,
-        selectMonths: true
-    });
+  $(".pickadate-disable").pickadate({
+    disable: [1, [2019, 3, 6], [2019, 3, 20]],
+  });
 
-    // Short String Date Picker
-    $('.pickadate-short-string').pickadate({
-        weekdaysShort: ['S', 'M', 'Tu', 'W', 'Th', 'F', 'S'],
-        showMonthsShort: true
-    });
+  // Picker Translations
+  $(".pickadate-translations").pickadate({
+    formatSubmit: "dd/mm/yyyy",
+    monthsFull: [
+      "Janvier",
+      "Février",
+      "Mars",
+      "Avril",
+      "Mai",
+      "Juin",
+      "Juillet",
+      "Août",
+      "Septembre",
+      "Octobre",
+      "Novembre",
+      "Décembre",
+    ],
+    monthsShort: [
+      "Jan",
+      "Fev",
+      "Mar",
+      "Avr",
+      "Mai",
+      "Juin",
+      "Juil",
+      "Aou",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ],
+    weekdaysShort: ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"],
+    today: "aujourd'hui",
+    clear: "clair",
+    close: "Fermer",
+  });
 
-    // Change first weekday
-    $('.pickadate-firstday').pickadate({
-        firstDay: 1
-    });
+  // Month Select Picker
+  $(".pickadate-months").pickadate({
+    selectYears: false,
+    selectMonths: true,
+  });
 
-    
+  // Month and Year Select Picker
+  $(".pickadate-months-year").pickadate({
+    selectYears: true,
+    selectMonths: true,
+  });
 
-    /*******    Pick-a-time Picker  *****/
-    // Basic time
-    $('.pickatime').pickatime();
+  // Short String Date Picker
+  $(".pickadate-short-string").pickadate({
+    weekdaysShort: ["S", "M", "Tu", "W", "Th", "F", "S"],
+    showMonthsShort: true,
+  });
 
-    // Format options
-    $('.pickatime-format').pickatime({
-        // Escape any “rule” characters with an exclamation mark (!).
-        format: 'T!ime selected: h:i a',
-        formatLabel: 'HH:i a',
-        formatSubmit: 'HH:i',
-        hiddenPrefix: 'prefix__',
-        hiddenSuffix: '__suffix'
-    });
+  // Change first weekday
+  $(".pickadate-firstday").pickadate({
+    firstDay: 1,
+  });
 
+  /*******    Pick-a-time Picker  *****/
+  // Basic time
+  $(".pickatime").pickatime();
 
-    // Format options
-    $('.pickatime-formatlabel').pickatime({
-        formatLabel: function(time) {
-            var hours = ( time.pick - this.get('now').pick ) / 60,
-                label = hours < 0 ? ' !hours to now' : hours > 0 ? ' !hours from now' : 'now';
-            return  'h:i a <sm!all>' + ( hours ? Math.abs(hours) : '' ) + label +'</sm!all>';
-        }
-    });
+  // Format options
+  $(".pickatime-format").pickatime({
+    // Escape any “rule” characters with an exclamation mark (!).
+    format: "T!ime selected: h:i a",
+    formatLabel: "HH:i a",
+    formatSubmit: "HH:i",
+    hiddenPrefix: "prefix__",
+    hiddenSuffix: "__suffix",
+  });
 
-    // Min - Max Time to select
-    $( '.pickatime-min-max').pickatime({
+  // Format options
+  $(".pickatime-formatlabel").pickatime({
+    formatLabel: function (time) {
+      var hours = (time.pick - this.get("now").pick) / 60,
+        label =
+          hours < 0 ? " !hours to now" : hours > 0 ? " !hours from now" : "now";
+      return (
+        "h:i a <sm!all>" + (hours ? Math.abs(hours) : "") + label + "</sm!all>"
+      );
+    },
+  });
 
-        // Using Javascript
-        min: new Date(2015,3,20,7),
-        max: new Date(2015,7,14,18,30)
+  // Min - Max Time to select
+  $(".pickatime-min-max").pickatime({
+    // Using Javascript
+    min: new Date(2015, 3, 20, 7),
+    max: new Date(2015, 7, 14, 18, 30),
 
-        // Using Array
-        // min: [7,30],
-        // max: [14,0]
-    });
+    // Using Array
+    // min: [7,30],
+    // max: [14,0]
+  });
 
-    // Intervals
-    $('.pickatime-intervals').pickatime({
-        interval: 150
-    });
+  // Intervals
+  $(".pickatime-intervals").pickatime({
+    interval: 150,
+  });
 
-    // Disable Time
-    $('.pickatime-disable').pickatime({
-        disable: [
-        // Disable Using Integers
-            3, 5, 7, 13, 17, 21
+  // Disable Time
+  $(".pickatime-disable").pickatime({
+    disable: [
+      // Disable Using Integers
+      3, 5, 7, 13, 17, 21,
 
-        /* Using Array */
-            // [0,30],
-            // [2,0],
-            // [8,30],
-            // [9,0]
-        ]
-    });
+      /* Using Array */
+      // [0,30],
+      // [2,0],
+      // [8,30],
+      // [9,0]
+    ],
+  });
 
-    
-    // Close on a user action
-    $('.pickatime-close-action').pickatime({
-        closeOnSelect: false,
-        closeOnClear: false
-    });
-
-
+  // Close on a user action
+  $(".pickatime-close-action").pickatime({
+    closeOnSelect: false,
+    closeOnClear: false,
+  });
 })(window, document, jQuery);
