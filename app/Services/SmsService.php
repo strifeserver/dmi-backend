@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Services;
-
+use App\CoreSmsOutbox;
 class SmsService {
 
 
@@ -16,13 +16,18 @@ class SmsService {
 
     public function smsSend($data){
 
-        // return true;
+
+
 
         // Set your API key and mobile number
         $apiKey = '006d0d31d2e4e47a5e35cf6623891d03';
         $mobileNumber = $data['mobile_number'];
         $message = $data['message'];
         
+
+
+
+        // return true;
         // API URL
         $url = 'https://semaphore.co/api/v4/priority';
         
@@ -53,8 +58,14 @@ class SmsService {
         curl_close($ch);
         
         // Display the response from the API
-        echo $response;
-        
+        $sms = new CoreSmsOutbox;
+        $sms->mobile_number = $mobileNumber;
+        $sms->content = $message;
+        $sms->remarks = $response;
+        $sms->save();
+
+        return $response;
+
         
         
     }

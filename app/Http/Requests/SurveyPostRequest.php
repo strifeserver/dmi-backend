@@ -52,7 +52,20 @@ class SurveyPostRequest extends FormRequest
             'sqm_estimation' => ['nullable','integer'],
             'name' => ['required'],
             'email_address' => ['required','email'],
-            'mobile_number' => ['nullable', 'regex:/^(09\d{9}|639\d{9})$/'],
+            'mobile_number' => [
+                'nullable',
+                function ($attribute, $value, $fail) {
+                    // Remove any non-numeric characters
+                    $value = preg_replace('/[^0-9]/', '', $value);
+
+                    // Check if the mobile number is either 11 digits starting with '639' or 10 digits starting with '09'
+                    if (!preg_match('/^(639|09)\d{9}$/', $value)) {
+                        $fail("The $attribute must be a valid mobile number in the format 639XXXXXXXXX or 09XXXXXXXXX.");
+                        // echo 'FAIL';
+                    }
+
+                },
+            ],
             'schedule_info' => ['nullable'],
             'status' => ['nullable'],
             'survey_pricing_details' => ['nullable'],

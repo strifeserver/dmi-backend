@@ -17,7 +17,7 @@ class CreateCoreSmsOutboxesTable extends Migration
             $table->id();
             $table->string('mobile_number')->nullable();
             $table->text('content')->nullable();
-            $table->string('remarks')->nullable();
+            $table->text('remarks')->nullable();
             $table->string('created_by')->nullable();
             $table->timestamps();
         });
