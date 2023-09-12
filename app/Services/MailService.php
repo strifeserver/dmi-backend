@@ -10,6 +10,7 @@ use App\Emails\SendMail;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Mail;
 use App\CoreEmailTemplate;
+use App\CoreEmailOutbox;
 use Illuminate\Support\Facades\Log;
 class MailService
 {
@@ -140,6 +141,20 @@ class MailService
                         'result' => ['mail_info' => ['status' => 'In Queue']],
                     ];
                 }
+
+                try {
+                    $emailOutbox = new CoreEmailOutbox;
+                    $emailOutbox->email = json_encode($to);
+                    $emailOutbox->subject = $title;
+                    $emailOutbox->content = $body;
+                    $emailOutbox->remarks = json_encode($details);
+                    $emailOutbox->save();
+                } catch (\Throwable $th) {
+                    //throw $th;
+                }
+
+
+
 
                 // Store outbox data
                 // $outbox_data = [
