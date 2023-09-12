@@ -220,30 +220,7 @@ class SurveyHistoryController extends Controller implements Paginatable
 
         } else {
 
-            if (!empty(request('mobile_number'))) {
 
-                if (!preg_match('/^(639|09)\d{9}$/', request('mobile_number'))) {
-                    // $fail("The $attribute must be a valid mobile number in the format 639XXXXXXXXX or 09XXXXXXXXX.");
-                } else {
-                    $mobileNumber = request('mobile_number');
-                    if (!empty($request->mobile_number)) {
-                        if (strlen($request->mobile_number) === 11 && substr($request->mobile_number, 0, 2) === '09') {
-                            $mobileNumber = '639' . substr($request->mobile_number, 2);
-                        } else {
-                            $mobileNumber = $request->mobile_number;
-                        }
-
-                    }
-
-                    $SmsService = app(SmsService::class);
-                    $smsSendData = [
-                        'mobile_number' => $mobileNumber,
-                        'message' => 'a Survey has been created with the Survey ID of' . @$survey_id,
-                    ];
-                    $smsNotification = $SmsService->smsSend($smsSendData);
-                }
-
-            }
 
             // create survey
             $survey_id = $this->generateTicket();
@@ -281,6 +258,33 @@ class SurveyHistoryController extends Controller implements Paginatable
             ];
 
             $createSchedule = $this->ScheduleService->store($to_validate);
+
+
+            if (!empty(request('mobile_number'))) {
+
+                if (!preg_match('/^(639|09)\d{9}$/', request('mobile_number'))) {
+                    // $fail("The $attribute must be a valid mobile number in the format 639XXXXXXXXX or 09XXXXXXXXX.");
+                } else {
+                    $mobileNumber = request('mobile_number');
+                    if (!empty($request->mobile_number)) {
+                        if (strlen($request->mobile_number) === 11 && substr($request->mobile_number, 0, 2) === '09') {
+                            $mobileNumber = '639' . substr($request->mobile_number, 2);
+                        } else {
+                            $mobileNumber = $request->mobile_number;
+                        }
+
+                    }
+
+                    $SmsService = app(SmsService::class);
+                    $smsSendData = [
+                        'mobile_number' => $mobileNumber,
+                        'message' => 'a Survey has been created with the Survey ID of' . @$survey_id,
+                    ];
+                    $smsNotification = $SmsService->smsSend($smsSendData);
+                }
+
+            }
+
             if (isset($createSchedule['result']) && !empty($createSchedule['result']['id'])) {
                 $UpdateStructure = [
                     'survey_id' => $survey_id,
