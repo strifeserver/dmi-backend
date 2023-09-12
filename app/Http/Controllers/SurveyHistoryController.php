@@ -9,6 +9,7 @@ use App\Http\Controllers\Pagination\Paginatable;
 use App\Http\Requests\SurveyPostRequest;
 use App\ScheduleList;
 use App\Services\AuthService;
+use App\Services\MailService;
 use App\Services\PageService;
 use App\Services\ScheduleService;
 use App\Services\SmsService;
@@ -220,8 +221,6 @@ class SurveyHistoryController extends Controller implements Paginatable
 
         } else {
 
-
-
             // create survey
             $survey_id = $this->generateTicket();
             $to_validate = [
@@ -259,7 +258,6 @@ class SurveyHistoryController extends Controller implements Paginatable
 
             $createSchedule = $this->ScheduleService->store($to_validate);
 
-
             if (!empty(request('mobile_number'))) {
 
                 if (!preg_match('/^(639|09)\d{9}$/', request('mobile_number'))) {
@@ -283,6 +281,12 @@ class SurveyHistoryController extends Controller implements Paginatable
                     $smsNotification = $SmsService->smsSend($smsSendData);
                 }
 
+            }
+            if (!empty(request('email_address'))) {
+                $EmailService = app(MailService::class);
+                $replaceables = [];
+                $replaceables[4] = @$survey_id;
+                $execution = $EmailService->send(request('email_address'), '', '', '', 'survey-creation-notification', '', $replaceables);
             }
 
             if (isset($createSchedule['result']) && !empty($createSchedule['result']['id'])) {

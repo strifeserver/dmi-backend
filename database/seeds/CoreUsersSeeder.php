@@ -82,6 +82,16 @@ class CoreUsersSeeder extends Seeder
             'auto_reply'        => '',
             'is_enabled'        => 1,
         );
+        $email_template[] = array(
+            'identifier'        => 'survey-creation-notification',
+            'name'              => ' Survey Created',
+            'title'             => ' Survey Created',
+            'subject'           => ' Survey Created',
+            'content'           => 'Hello!
+                                    You are receiving this email because you have a Survey Created with the ID of {{ survey_id }}',
+            'auto_reply'        => '',
+            'is_enabled'        => 1,
+        );
 
         
 

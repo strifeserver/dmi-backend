@@ -57,6 +57,7 @@ class MailService
             '{{ customer_name }}', #1
             '{{ otp }}', #2
             '{{ expiry }}', #3
+            '{{ survey_id }}', #4
         ];
 
         return $findVariables;
