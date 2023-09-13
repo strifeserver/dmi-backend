@@ -109,7 +109,7 @@
         <div class="col-lg-12 col-md-6 col-sm-2 navbar-container content">
             <div>
                 <div class="mr-auto  bookmark-wrapper d-flex align-items-center">
-                    <img src="http://127.0.0.1:8000/images/core_cust.png" alt=""
+                    <img src="/images/core_cust.png" alt=""
                         style="height: 60px;
                     width: 130px;">
 
