@@ -45,12 +45,13 @@ document.addEventListener("DOMContentLoaded", function () {
             let scheduletitle = '';
             try {
               let truncatedString = schedule.survey_code.substring(0, 5);
-              scheduletitle = truncatedString + " " + schedule.schedule_title
+              // scheduletitle = truncatedString + " " + schedule.schedule_title
+              scheduletitle = schedule.survey_customer_name + " "+ truncatedString 
             } catch (error) {
               scheduletitle = schedule.schedule_title
               
             }
-   
+            console.log(schedule)
             // console.log(truncatedString)
             // console.log(truncatedString+' '+schedule.schedule_title)
             return {
@@ -107,6 +108,7 @@ document.addEventListener("DOMContentLoaded", function () {
           var calDate = new Date(),
             todaysDate = calDate.toISOString().slice(0, 10);
           $(".modal-calendar").modal("show");
+          console.log('show / add')
           $(".modal-calendar .cal-submit-event").addClass("d-none");
           $(".modal-calendar .remove-event").addClass("d-none");
           $(".modal-calendar .cal-add-event").removeClass("d-none");
@@ -130,6 +132,8 @@ document.addEventListener("DOMContentLoaded", function () {
     allDay: true,
     navLinkDayClick: function (date) {
       $(".modal-calendar").modal("show");
+      $(".modal-footer").show();
+      console.log('show add')
     },
     dateClick: function (info) {
       $(".modal-calendar #cal-start-date")
@@ -153,6 +157,7 @@ document.addEventListener("DOMContentLoaded", function () {
         textcolor = "Finished";
       }
       $(".modal-calendar").modal("show");
+      
       $(".modal-calendar #cal-event-title").val(info.event.title);
       $(".modal-calendar #cal-start-date").val(
         moment(info.event.start).format("YYYY-MM-DD")
@@ -311,6 +316,7 @@ document.addEventListener("DOMContentLoaded", function () {
       $(".modal-footer").show();
       $(".modal-calendar").modal("show");
     }
+    console.log('Day show')
     $(".calendar-dropdown .dropdown-menu")
       .find(".selected")
       .removeClass("selected");

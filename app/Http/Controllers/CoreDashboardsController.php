@@ -199,6 +199,9 @@ class CoreDashboardsController extends Controller
                 $fetchSurveyID = Survey::where('id','=',$item['survey_id'])->first();
                 if(!empty($fetchSurveyID)){
                     $item['survey_code'] = $fetchSurveyID['survey_id'];
+                    $item['survey_customer_name'] = $fetchSurveyID['name'];
+                    $item['survey_customer_email'] = $fetchSurveyID['email_address'];
+
                 }
             }
             unset($item["date"]);
