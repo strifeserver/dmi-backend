@@ -118,6 +118,7 @@ document.addEventListener("DOMContentLoaded", function () {
             todaysDate = calDate.toISOString().slice(0, 10);
           $(".modal-calendar").modal("show");
           console.log('show / add')
+          $("#create_payment_link").show();
           $(".modal-calendar .cal-submit-event").addClass("d-none");
           $(".modal-calendar .remove-event").addClass("d-none");
           $(".modal-calendar .cal-add-event").removeClass("d-none");
