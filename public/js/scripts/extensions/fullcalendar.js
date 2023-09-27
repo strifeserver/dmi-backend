@@ -200,6 +200,7 @@ document.addEventListener("DOMContentLoaded", function () {
       // modal-footer
       // $(".modal-footer").css("display", "none");
       // $(".modal-footer").hide();
+      $("#create_payment_link").hide();
       console.log(info.event.end)
       if(info.event.extendedProps.length > 0){
         alert('zzz')
