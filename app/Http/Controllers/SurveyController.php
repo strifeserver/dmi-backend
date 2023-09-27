@@ -240,9 +240,9 @@ class SurveyController extends Controller implements Paginatable
                 foreach ($plotted_schedules as $key => $plot_schedule) {
                     $plotScheduleInfo = [
                         'schedule_title' => $plot_schedule['schedule_title'] ?? 'Scheduled Appointment',
-                        'date' => $plot_schedule['date'],
-                        'end_date' => $plot_schedule['end_date'],
-                        'description' => $plot_schedule['description'],
+                        'date' => $plot_schedule['date'] ?? '',
+                        'end_date' => $plot_schedule['end_date'] ?? '',
+                        'description' => $plot_schedule['description'] ?? '',
                     ];
                     $plottedSched[] = $plotScheduleInfo;
                 }
