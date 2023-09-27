@@ -51,6 +51,15 @@ document.addEventListener("DOMContentLoaded", function () {
               scheduletitle = schedule.schedule_title
               
             }
+
+
+            var endDate = new Date(schedule.end_date);
+            endDate.setDate(endDate.getDate() + 1);
+             endDate = endDate.toISOString().split('T')[0];
+            // console.log(endDate.toISOString().split('T')[0]);
+
+
+
             console.log(schedule)
             // console.log(truncatedString)
             // console.log(truncatedString+' '+schedule.schedule_title)
@@ -61,7 +70,7 @@ document.addEventListener("DOMContentLoaded", function () {
               survey_id: schedule.survey_id,
               title: scheduletitle,
               start: schedule.start_date,
-              end: schedule.end_date,
+              end: endDate,
               className: schedule.classes,
               description: schedule.description,
               // url: 'http://127.0.0.1:8000/surveys/1/edit',
@@ -190,7 +199,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // alert(eventCategory)
       // modal-footer
       // $(".modal-footer").css("display", "none");
-      $(".modal-footer").hide();
+      // $(".modal-footer").hide();
       console.log(info.event.end)
       if(info.event.extendedProps.length > 0){
         alert('zzz')
@@ -231,6 +240,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const description = $("#cal-description").val();
     var chipElement = $(".chip-wrapper").find(".chip");
     var chipClass = chipElement.attr("class");
+
+    chipClass = chipClass.replace(/^chip /, '');
+
+
     // console.log('---------')
     // console.log(chipClass)
     // return false;
@@ -246,7 +259,6 @@ document.addEventListener("DOMContentLoaded", function () {
       classes: chipClass,
       schedule_type: "scheduled",
     };
-
     // Retrieve CSRF token value from the page meta tag
     const csrfToken = $('meta[name="csrf-token"]').attr("content");
 
