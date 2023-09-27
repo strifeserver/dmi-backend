@@ -6,11 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Services\ScheduleService;
 use App\Services\SurveyService;
 use App\Services\WorkerService;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
 use App\Survey;
 use App\User;
-
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use DateTime;
+use DateInterval;
 class CoreDashboardsController extends Controller
 {
     /**
@@ -49,10 +50,10 @@ class CoreDashboardsController extends Controller
                 $getWorkers = $workerService->index([]);
                 if (!empty($getWorkers['result'])) {
                     foreach ($getWorkers['result'] as $key => $value) {
-                        if($value['status'] == 1){
+                        if ($value['status'] == 1) {
                             $workerCount++;
                         }
-                     
+
                     }
                     // $workerCount = count($getWorkers['result']);
                 }
@@ -65,7 +66,7 @@ class CoreDashboardsController extends Controller
 
                 }
                 $authid = auth()->id();
-                $getUser = User::where('id','=', $authid)->first();
+                $getUser = User::where('id', '=', $authid)->first();
                 $access_level = $getUser->access_level;
 
                 return view('/pages/dashboard-analytics', [
@@ -78,7 +79,7 @@ class CoreDashboardsController extends Controller
                     'finishedSurveyPercentage' => $fetchAnalytics['finishedSurveyPercentage'],
                     'pendingSurveyPercentage' => $fetchAnalytics['pendingSurveyPercentage'],
                     'rejectedSurveyPercentage' => $fetchAnalytics['rejectedSurveyPercentage'],
-                    'access_level'=> $access_level
+                    'access_level' => $access_level,
                 ]);
                 break;
         }
@@ -91,6 +92,12 @@ class CoreDashboardsController extends Controller
         $from = date('Y-m-d', strtotime('-7 days'));
         $to = date('Y-m-d');
 
+        if (!empty($data['template_filters']['created_at']['to'])) {
+            $date = new DateTime("2023-09-27");
+            $date->add(new DateInterval('P2D'));
+
+            $data['template_filters']['created_at']['to'] =  $date->format('Y-m-d');
+        }
 
         $pendingParams = [['status' => 'pending'], $data['template_filters']];
         $pendingParams = [
@@ -117,24 +124,20 @@ class CoreDashboardsController extends Controller
 
         ];
 
-
         $pendingParams['filter'] = json_encode($pendingParams['filter']);
         $finishedParams['filter'] = json_encode($finishedParams['filter']);
         $rejectedParams['filter'] = json_encode($rejectedParams['filter']);
 
-
-
-
-
         $pendingSurveys = $surveyService->index($pendingParams);
 
         $finishedSurveys = $surveyService->index($finishedParams);
-        
+
         $finishedSurveyCount = count($finishedSurveys['result'] ?? []);
 
         $pendingSurveyCount = count($pendingSurveys['result'] ?? []);
 
         $rejectedSurveys = $surveyService->index($rejectedParams);
+
         $rejectedSurveyCount = count($rejectedSurveys['result'] ?? []);
 
         $totalSurveyCount = $finishedSurveyCount + $pendingSurveyCount + $rejectedSurveyCount;
@@ -195,9 +198,9 @@ class CoreDashboardsController extends Controller
             if (empty($item["end_date"])) {
                 $item["end_date"] = $item["start_date"];
             }
-            if(!empty($item['survey_id'])){
-                $fetchSurveyID = Survey::where('id','=',$item['survey_id'])->first();
-                if(!empty($fetchSurveyID)){
+            if (!empty($item['survey_id'])) {
+                $fetchSurveyID = Survey::where('id', '=', $item['survey_id'])->first();
+                if (!empty($fetchSurveyID)) {
                     $item['survey_code'] = $fetchSurveyID['survey_id'];
                     $item['survey_customer_name'] = $fetchSurveyID['name'];
                     $item['survey_customer_email'] = $fetchSurveyID['email_address'];
