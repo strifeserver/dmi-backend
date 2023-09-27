@@ -273,6 +273,7 @@ class ScheduleService
                     switch ($request['classes']) {
                         case 'chip+chip-success':
                         case 'chip chip-success':
+                        case 'chip-success':
                             $structure = [
                                 'id' => $surveySearch['id'],
                                 'status' => 'finished',
@@ -281,6 +282,7 @@ class ScheduleService
                             break;
                         case 'chip+chip-warning':
                         case 'chip chip-warning':
+                        case 'chip-warning':
                             $structure = [
                                 'id' => $surveySearch['id'],
                                 'status' => 'pending',
@@ -290,6 +292,7 @@ class ScheduleService
                             break;
                         case 'chip+chip-danger':
                         case 'chip chip-danger':
+                        case 'chip-danger':
                             $structure = [
                                 'id' => $surveySearch['id'],
                                 'status' => 'rejected',
@@ -300,8 +303,10 @@ class ScheduleService
 
                         case 'chip+chip-blue':
                         case 'chip chip-blue':
+                        case 'chip-blue':
                         case 'chip+chip-primary':
                         case 'chip chip-primary':
+                        case 'chip-primary':
                             $structure = [
                                 'id' => $surveySearch['id'],
                                 'status' => 'process',
