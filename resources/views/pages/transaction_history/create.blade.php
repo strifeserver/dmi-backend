@@ -132,7 +132,7 @@
                     <div class="col-md-12">
                         <div class="row">
                             <div class="col-md-1">
-                                <button type="submit" class="btn btn-primary mr-1 mb-1">Submit</button>
+                                {{-- <button type="submit" class="btn btn-primary mr-1 mb-1">Submit</button> --}}
                             </div>
 
 
