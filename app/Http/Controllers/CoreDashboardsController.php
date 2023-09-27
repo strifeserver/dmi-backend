@@ -230,4 +230,16 @@ class CoreDashboardsController extends Controller
         // return $execution;
 
     }
+
+
+
+    public function scheduleDelete(request $request)
+    {
+
+        $ScheduleService = app(ScheduleService::class);
+        $keys = array_keys($request->all());
+        $id = $keys[0];
+        $execution = $ScheduleService->destroy($id);
+
+    }
 }

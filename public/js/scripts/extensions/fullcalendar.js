@@ -119,6 +119,8 @@ document.addEventListener("DOMContentLoaded", function () {
           $(".modal-calendar").modal("show");
           console.log('show / add')
           $("#create_payment_link").show();
+          $("#create_delete_link").hide();
+          
           $(".modal-calendar .cal-submit-event").addClass("d-none");
           $(".modal-calendar .remove-event").addClass("d-none");
           $(".modal-calendar .cal-add-event").removeClass("d-none");
@@ -202,6 +204,11 @@ document.addEventListener("DOMContentLoaded", function () {
       // $(".modal-footer").css("display", "none");
       // $(".modal-footer").hide();
       $("#create_payment_link").hide();
+      $("#create_delete_link").show();
+      // console.log(info.event.extendedProps.schedule_id_raw)
+      $("#currentscheduleidselected").val(info.event.extendedProps.schedule_id_raw);
+
+
       console.log(info.event.end)
       if(info.event.extendedProps.length > 0){
         alert('zzz')

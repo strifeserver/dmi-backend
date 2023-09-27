@@ -112,6 +112,7 @@ Route::get('/auth-reset-password', 'AuthenticationController@reset_password');
 Route::get('/filter_analytics', 'CoreDashboardsController@filterAnalytics');
 Route::post('/schedule_insert', 'CoreDashboardsController@scheduleInsert');
 Route::post('/schedule_update', 'CoreDashboardsController@scheduleUpdate');
+Route::post('/schedule_delete', 'CoreDashboardsController@scheduleDelete');
 Route::post('/customer_registration', 'CustomerController@register')->name('customer_registration');
 Route::get('/activate', 'CustomerController@activateAccount');
 

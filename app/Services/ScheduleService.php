@@ -332,18 +332,18 @@ class ScheduleService
  */
     public function destroy(int $id): array
     {
-        $existing_data = $this->edit($id);
+        // $existing_data = $this->edit($id);
         $execution = $this->repository->destroy($id);
 
-        if ($execution['status'] === 1 && $existing_data) {
-            $existing_data = $existing_data['result']->toArray() ?? $existing_data['result'];
-            $audit_data = ['existing_data' => $existing_data];
-            // $this->audit_service->store($audit_data);
-        }
+        // if ($execution['status'] === 1 && $existing_data) {
+        //     $existing_data = $existing_data['result']->toArray() ?? $existing_data['result'];
+        //     $audit_data = ['existing_data' => $existing_data];
+        //     // $this->audit_service->store($audit_data);
+        // }
 
-        $response = $this->api_service->api_returns($execution);
+        // $response = $this->api_service->api_returns($execution);
 
-        return $response;
+        return [];
     }
 
 /**
