@@ -476,9 +476,10 @@
         // Function to display the SweetAlert2 dialog with the schedule details
         function showScheduleDialog(schedule) {
             var scheduleTitle = schedule.schedule_title;
-            var date = schedule.date;
-            var endDate = schedule.end_date;
-            var description = schedule.description;
+            var date = schedule.date ?? '';
+            var endDate = schedule.end_date ?? '';
+            // var description = schedule.description;
+            var description = schedule.description ?? '';
             var requested_amount = '';
             var payment_url = '';
             if (schedule.hasOwnProperty('requested_amount')) {
