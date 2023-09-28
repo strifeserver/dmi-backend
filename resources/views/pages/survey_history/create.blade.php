@@ -496,8 +496,8 @@
                     '<p style="text-align: left;">End Date: ' + endDate + '</p>' +
                     '<p style="text-align: left;">Description: ' + description + '</p>' +
                     (requested_amount ? '<p id="payment_text" style="text-align: left;">Payment: </p>' +
-                        '<a id="payment_url" href="' + payment_url + '" target="_blank">' +
-                        '<img src="/images/gcash.png" style="text-align: left; height:65px; border: 2px solid black;"></img>' +
+                        // '<a id="payment_url" href="' + payment_url + '" target="_blank">' +
+                        // '<img src="/images/gcash.png" style="text-align: left; height:65px; border: 2px solid black;"></img>' +
                         '</a>' : '') +
                     (requested_amount ? '<p style="text-align: left;">Requested Amount: ' + requested_amount +
                         '</p>' : ''),
