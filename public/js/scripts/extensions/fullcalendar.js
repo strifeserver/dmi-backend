@@ -225,7 +225,11 @@ document.addEventListener("DOMContentLoaded", function () {
           $("#payment_input").show();
           $("#payment_amount").val(info.event._def.extendedProps.transaction_amount);
           $("#create_payment_link").hide();
+          $("#payment_amount").attr("readonly", true);
           
+        }else{
+          $("#payment_amount").attr("readonly", false);
+
         }
         var enddatedefaulting = $("#cal-end-date").val();
 
@@ -240,7 +244,6 @@ document.addEventListener("DOMContentLoaded", function () {
           // Format the resulting date as a string (e.g., "YYYY-MM-DD")
           var formattedDate = currentDate.toISOString().slice(0, 10);
           $("#cal-end-date").val(formattedDate)
-          $("#payment_amount").attr("readonly", true);
         }
 
 
