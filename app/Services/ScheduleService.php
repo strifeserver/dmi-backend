@@ -109,10 +109,7 @@ class ScheduleService
         }
    
         $execution = $this->repository->execute_store($request);
-        // $execution = [
-        //     'status' => 1,
-        //     'data_id' => 10,
-        // ];
+
         if ($execution['status'] === 1) {
             $audit_data = ['incoming_data' => $request];
         }
@@ -319,6 +316,88 @@ class ScheduleService
 
             }
         }
+
+
+        $request['payment_gateway'] = 'paymongo';
+        if (isset($request['payment_amount'])) {
+
+            if ($request['payment_gateway'] == 'paymongo') {
+                $payment_amount = $request['payment_amount'];
+                if ($payment_amount > 100) {
+                    $createPaymentLink = $this->create_payment_link($request);
+        
+                    // $createPaymentLink = [
+                    //     'checkout_url' => 'https://pm.link/strifeserver/test/j7Lr371',
+                    //     'reference_number' => 'j7Lr371',
+                    //     'status' => '1',
+                    // ];
+              
+                    $paymentURL = $createPaymentLink['checkout_url'];
+
+                }
+            }
+
+            if ($request['payment_gateway'] == 'paypal') {
+                $payment_amount = $request['payment_amount'];
+                if ($payment_amount > 100) {
+                    $createPaymentLink = $this->create_payment_link($request);
+                    // $PaypalResult = [
+                    //     "id" => "6XK7750295684622V",
+                    //     "status" => "CREATED",
+                    //     "links" => [
+                    //         [
+                    //             "href" => "https://api.sandbox.paypal.com/v2/checkout/orders/6XK7750295684622V",
+                    //             "rel" => "self",
+                    //             "method" => "GET",
+                    //         ],
+                    //         [
+                    //             "href" => "https://www.sandbox.paypal.com/checkoutnow?token=6XK7750295684622V",
+                    //             "rel" => "approve",
+                    //             "method" => "GET",
+                    //         ],
+                    //         [
+                    //             "href" => "https://api.sandbox.paypal.com/v2/checkout/orders/6XK7750295684622V",
+                    //             "rel" => "update",
+                    //             "method" => "PATCH",
+                    //         ],
+                    //         [
+                    //             "href" => "https://api.sandbox.paypal.com/v2/checkout/orders/6XK7750295684622V/capture",
+                    //             "rel" => "capture",
+                    //             "method" => "POST",
+                    //         ],
+                    //     ],
+                    // ];
+
+                    $paymentURL = $PaypalResult['links'][1];
+                }
+
+            }
+
+            // if (isset($paymentURL)) {
+                // $execution['payment'] = $paymentURL;
+                $getSurveyInfo = Survey::where('id', '=', $request['survey_id'])->first();
+                if ($getSurveyInfo) {
+                    $surveyID = $getSurveyInfo['survey_id'];
+
+                }
+
+                $transactionStructure = [
+                    'tagged_schedule_id' =>  $request['schedule_id_raw'],
+                    'survey_id' => $surveyID,
+                    'requested_amount' => $request['payment_amount'],
+                    'payment_url' => null,
+                    'status' => 0,
+                ];
+
+                $transactionService = app(TransactionService::class);
+                $createTransactionLog = $transactionService->store($transactionStructure);
+
+            // }
+
+        }
+
+
+
         $request['id'] = $request['schedule_id_raw'];
         $execution = $this->repository->execute_update($request);
 

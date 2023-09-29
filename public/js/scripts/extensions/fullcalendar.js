@@ -36,8 +36,8 @@ document.addEventListener("DOMContentLoaded", function () {
         dataType: "json",
         success: function (response) {
           var events = response.result.map(function (schedule) {
+            console.log('LOAD SCHEDULES')
             console.log("LENGTH ", schedule.schedule_title.length);
-
             // Rejected
             // Success
             // Pending
@@ -58,13 +58,16 @@ document.addEventListener("DOMContentLoaded", function () {
              endDate = endDate.toISOString().split('T')[0];
             // console.log(endDate.toISOString().split('T')[0]);
 
-
-
+            var transaction_amount = schedule.transaction_amount ?? ''; 
+            var transaction_id = schedule.transaction_id ?? ''; 
+            var transaction_status = schedule.transaction_status ?? ''; 
+            
             console.log(schedule)
             // console.log(truncatedString)
             // console.log(truncatedString+' '+schedule.schedule_title)
             return {
               schedule_id_raw: schedule.id,
+
               schedule_id: schedule.survey_code,
               id: schedule.survey_code,
               survey_id: schedule.survey_id,
@@ -73,6 +76,9 @@ document.addEventListener("DOMContentLoaded", function () {
               end: endDate,
               className: schedule.classes,
               description: schedule.description,
+              transaction_amount: transaction_amount,
+              transaction_id: transaction_id,
+              transaction_status: transaction_status,
               // url: 'http://127.0.0.1:8000/surveys/1/edit',
             };
           });
@@ -118,6 +124,7 @@ document.addEventListener("DOMContentLoaded", function () {
             todaysDate = calDate.toISOString().slice(0, 10);
           $(".modal-calendar").modal("show");
           console.log('show / add')
+          $("#payment_amount").attr("readonly", false);
           $("#create_payment_link").show();
           $("#create_delete_link").hide();
           
@@ -145,6 +152,10 @@ document.addEventListener("DOMContentLoaded", function () {
     navLinkDayClick: function (date) {
       $(".modal-calendar").modal("show");
       $(".modal-footer").show();
+      $("#create_delete_link").hide();
+      $("#payment_input").hide();
+      $("#create_payment_link").show();
+      $("#payment_amount").attr("readonly", false);
       console.log('show add')
     },
     dateClick: function (info) {
@@ -203,12 +214,39 @@ document.addEventListener("DOMContentLoaded", function () {
       // modal-footer
       // $(".modal-footer").css("display", "none");
       // $(".modal-footer").hide();
-      $("#create_payment_link").hide();
+      $("#create_payment_link").show();
       $("#create_delete_link").show();
       // console.log(info.event.extendedProps.schedule_id_raw)
       $("#currentscheduleidselected").val(info.event.extendedProps.schedule_id_raw);
 
+        console.log('EDIT')
 
+        if(info.event._def.extendedProps.transaction_amount.length > 0){
+          $("#payment_input").show();
+          $("#payment_amount").val(info.event._def.extendedProps.transaction_amount);
+          $("#create_payment_link").hide();
+          
+        }
+        var enddatedefaulting = $("#cal-end-date").val();
+
+
+        if(enddatedefaulting.length > 0){
+          // Create a Date object representing the desired date
+          var currentDate = new Date($("#cal-end-date").val());
+    
+          // Subtract one day by using setDate() and getDate()
+          currentDate.setDate(currentDate.getDate() - 1);
+    
+          // Format the resulting date as a string (e.g., "YYYY-MM-DD")
+          var formattedDate = currentDate.toISOString().slice(0, 10);
+          $("#cal-end-date").val(formattedDate)
+          $("#payment_amount").attr("readonly", true);
+        }
+
+
+        // info.event._def.extendedProps.schedule_id_raw
+        // info.event._def.extendedProps.schedule_id_raw
+        console.log(info.event._def.extendedProps)
       console.log(info.event.end)
       if(info.event.extendedProps.length > 0){
         alert('zzz')
@@ -247,6 +285,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const start_date = $("#cal-start-date").val();
     const end_date = $("#cal-end-date").val();
     const description = $("#cal-description").val();
+    const payment_amount = $("#payment_amount").val();
     var chipElement = $(".chip-wrapper").find(".chip");
     var chipClass = chipElement.attr("class");
 
@@ -266,6 +305,7 @@ document.addEventListener("DOMContentLoaded", function () {
       end_date: end_date,
       description: description,
       classes: chipClass,
+      payment_amount: payment_amount,
       schedule_type: "scheduled",
     };
     // Retrieve CSRF token value from the page meta tag
@@ -277,7 +317,7 @@ document.addEventListener("DOMContentLoaded", function () {
         "X-CSRF-TOKEN": csrfToken,
       },
     });
-
+    console.log(requestData);
     // Make an API request when the button is clicked
     $.ajax({
       url: "/schedule_update",
@@ -302,8 +342,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Remove Event
   $(".remove-event").on("click", function () {
-    var removeEvent = calendar.getEventById("newEvent");
-    removeEvent.remove();
+    try {
+      var removeEvent = calendar.getEventById("newEvent");
+      removeEvent.remove();
+    } catch (error) {
+      
+    }
+
   });
 
   // reset input element's value for new event
@@ -416,4 +461,12 @@ document.addEventListener("DOMContentLoaded", function () {
   $(".pickadate").pickadate({
     format: "yyyy-mm-dd",
   });
+});
+
+
+
+$("#create_payment_link").click(function() {
+
+  $("#payment_input").show();
+
 });

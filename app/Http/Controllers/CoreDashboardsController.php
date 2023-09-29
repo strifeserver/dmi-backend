@@ -8,6 +8,7 @@ use App\Services\SurveyService;
 use App\Services\WorkerService;
 use App\Survey;
 use App\User;
+use App\transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use DateTime;
@@ -206,6 +207,13 @@ class CoreDashboardsController extends Controller
                     $item['survey_customer_email'] = $fetchSurveyID['email_address'];
 
                 }
+                $transaction = transaction::where('tagged_schedule_id', '=', $item['id'])->first();
+                if(!empty($transaction)){
+                    $item['transaction_id'] = $transaction['id'];
+                    $item['transaction_amount'] = $transaction['requested_amount'];
+                    $item['transaction_status'] = $transaction['status'];
+                }
+
             }
             unset($item["date"]);
             return $item;

@@ -195,7 +195,7 @@
             <!-- calendar Modal starts-->
             <div class="modal fade text-left modal-calendar" tabindex="-1" role="dialog" aria-labelledby="cal-modal"
                 aria-modal="true">
-                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-sm" role="document">
+                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-md" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h4 class="modal-title text-text-bold-600" id="cal-modal">
