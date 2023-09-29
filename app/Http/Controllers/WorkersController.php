@@ -11,7 +11,7 @@ use App\Services\AuthService;
 use App\Services\PageService;
 use App\Services\WorkerService;
 use App\Support\AgGrid;
-use App\Worker;
+use App\worker;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 
@@ -19,7 +19,7 @@ class WorkersController extends Controller implements Paginatable
 {
     use AcceptsPagination;
 
-    public function __construct(Worker $db_table, PageService $pageService, authService $authService, WorkerService $WorkerService)
+    public function __construct(worker $db_table, PageService $pageService, authService $authService, WorkerService $WorkerService)
     {
         $this->db_table = $db_table;
         $this->pageService = $pageService;
