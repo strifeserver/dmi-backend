@@ -120,10 +120,12 @@ if(table_version == 'v2'){
           }
   
           if (access.delete) {
+            console.log(params.routes.delete)
             const deleteBtn = CORE_Framework.createDelete({ id: params.value });
   
             deleteBtn.addEventListener('click', () => {
-              document.getElementById('delform').action = params.routes.delete.replace(':id', params.value);
+              // document.getElementById('delform').action = params.routes.delete.replace(':id', params.value);
+              document.getElementById('delform').action = '/remove_transaction/'+params.value;
               document.getElementById('modal_msg').innerHTML = 'Are you sure you want to delete?';
             });
   

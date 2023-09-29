@@ -2,32 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\TransactionPostRequest;
-
-
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Pagination\AcceptsPagination;
 use App\Http\Controllers\Pagination\PageData;
-use App\Http\Requests\SurveyPostRequest;
+use App\Http\Requests\TransactionPostRequest;
 use App\Services\AuthService;
 use App\Services\PageService;
-use App\Services\TransactionService;
 // use App\Services\transaction;
+use App\Services\TransactionService;
 use App\Support\AgGrid;
 use App\transaction;
-use App\Survey;
 use App\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
-use App\Http\Controllers\Pagination\Paginatable;
 
 class TransactionsController extends Controller
 {
-
-
-
-
-
 
     use AcceptsPagination;
 
@@ -85,10 +74,10 @@ class TransactionsController extends Controller
 
     // DATA FILTERING AND PAGINATION
 
-    public function getPage(int $start, int $end,  ? array $sortModel, ?object $filterModel) : PageData
+    public function getPage(int $start, int $end, ?array $sortModel, ?object $filterModel): PageData
     {
-  
-        $rows = $this->db_table->select('id','survey_id','requested_amount','tagged_schedule_id','status','created_at','updated_at')
+
+        $rows = $this->db_table->select('id', 'survey_id', 'requested_amount', 'tagged_schedule_id', 'status', 'created_at', 'updated_at')
             ->when($filterModel, function ($query, $filterModel) {
                 foreach ($filterModel as $key => $value) {
                     if ($key == 'created_at') {
@@ -103,8 +92,8 @@ class TransactionsController extends Controller
                 }
                 return $query;
             })
-            // ->whereIn('survey_id', $surveyIdList)
-            // ->where('created_by','=',auth()->id())
+        // ->whereIn('survey_id', $surveyIdList)
+        // ->where('created_by','=',auth()->id())
             ->paginate($end)
             ->toArray();
         $total = $rows['total'];
@@ -210,12 +199,6 @@ class TransactionsController extends Controller
         return $search_array;
     }
 
-
-
-
-
-
-
     public function store(TransactionPostRequest $request)
     {
 
@@ -245,7 +228,6 @@ class TransactionsController extends Controller
             );
     }
 
-
     public function edit($id)
     {
         $ctrl_var = $this->controller_variables();
@@ -253,15 +235,30 @@ class TransactionsController extends Controller
         $edit = $this->db_table->findOrFail($id);
         $page_variables['edit'] = $edit;
         $currentId = auth()->id();
-        $checkAccessLevel = User::where('id','=',$currentId)->first();
+        $checkAccessLevel = User::where('id', '=', $currentId)->first();
         $accessLevel = $checkAccessLevel->access_level;
-        if($accessLevel == 1){
+        if ($accessLevel == 1) {
             $page_variables['is_admin'] = true;
-        }else{
+        } else {
             $page_variables['is_admin'] = false;
         }
 
         return view($page_variables['edit_page'], $page_variables);
     }
+    public function destroy($db_table)
+    {
+        $page_variables = $this->pageService->page_variables(['controller_variables' => $this->controller_variables(), 'mode' => 'index']);
+        $db_table = $this->db_table->findOrFail($db_table);
 
+        $auditing = ['data_id' => $db_table->id, 'data' => $db_table];
+
+        $saving = $db_table->delete();
+        if ($saving) {
+            $core_audit_trail = $this->audit_trail('', 'DELETE', $auditing, $db_table->id);
+            $return_msg = ['type' => 'success', 'remarks' => 'Successfully Deleted'];
+        } else {
+            $return_msg = ['type' => 'error_comment', 'remarks' => 'Failed to Delete'];
+        }
+        return redirect()->route($page_variables['destroy_page'])->with($return_msg['type'], $return_msg['remarks']);
+    }
 }

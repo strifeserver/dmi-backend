@@ -130,3 +130,9 @@ Route::get('/paypal_cancel', 'PaypalController@cancel')->name('paypal_cancel');
 Route::get('/paymongo', 'PaymentController@paymongoGcashInitial');
 Route::get('/paymongo_success', 'PaymentController@paymongoGcashSuccess');
 Route::get('/paymongo_cancel', 'PaymentController@paymongoGcashCancel');
+
+
+
+Route::delete('/remove_transaction/{id}', 'TransactionHistoryController@destroy');
+
+// Route::get('/tessss', 'TransactionHistoryController@destroy')->name('transaction_history.destroy');

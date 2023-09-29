@@ -10,7 +10,7 @@ use App\Services\SurveyService;
 use App\Services\TransactionService;
 use App\Survey;
 use Helper;
-
+use App\transaction;
 class ScheduleService
 {
 /**
@@ -316,85 +316,90 @@ class ScheduleService
 
             }
         }
+        echo '<pre>';
 
-
-        $request['payment_gateway'] = 'paymongo';
-        if (isset($request['payment_amount'])) {
-
-            if ($request['payment_gateway'] == 'paymongo') {
-                $payment_amount = $request['payment_amount'];
-                if ($payment_amount > 100) {
-                    $createPaymentLink = $this->create_payment_link($request);
-        
-                    // $createPaymentLink = [
-                    //     'checkout_url' => 'https://pm.link/strifeserver/test/j7Lr371',
-                    //     'reference_number' => 'j7Lr371',
-                    //     'status' => '1',
-                    // ];
-              
-                    $paymentURL = $createPaymentLink['checkout_url'];
-
+        $checkTaggedTransaction = transaction::where('tagged_schedule_id','=',$request['schedule_id_raw'])->first();
+        if(empty($checkTaggedTransaction)){
+            $request['payment_gateway'] = 'paymongo';
+            if (isset($request['payment_amount'])) {
+    
+                if ($request['payment_gateway'] == 'paymongo') {
+                    $payment_amount = $request['payment_amount'];
+                    if ($payment_amount > 100) {
+                        $createPaymentLink = $this->create_payment_link($request);
+            
+                        // $createPaymentLink = [
+                        //     'checkout_url' => 'https://pm.link/strifeserver/test/j7Lr371',
+                        //     'reference_number' => 'j7Lr371',
+                        //     'status' => '1',
+                        // ];
+                  
+                        $paymentURL = $createPaymentLink['checkout_url'];
+    
+                    }
                 }
+    
+                if ($request['payment_gateway'] == 'paypal') {
+                    $payment_amount = $request['payment_amount'];
+                    if ($payment_amount > 100) {
+                        $createPaymentLink = $this->create_payment_link($request);
+                        // $PaypalResult = [
+                        //     "id" => "6XK7750295684622V",
+                        //     "status" => "CREATED",
+                        //     "links" => [
+                        //         [
+                        //             "href" => "https://api.sandbox.paypal.com/v2/checkout/orders/6XK7750295684622V",
+                        //             "rel" => "self",
+                        //             "method" => "GET",
+                        //         ],
+                        //         [
+                        //             "href" => "https://www.sandbox.paypal.com/checkoutnow?token=6XK7750295684622V",
+                        //             "rel" => "approve",
+                        //             "method" => "GET",
+                        //         ],
+                        //         [
+                        //             "href" => "https://api.sandbox.paypal.com/v2/checkout/orders/6XK7750295684622V",
+                        //             "rel" => "update",
+                        //             "method" => "PATCH",
+                        //         ],
+                        //         [
+                        //             "href" => "https://api.sandbox.paypal.com/v2/checkout/orders/6XK7750295684622V/capture",
+                        //             "rel" => "capture",
+                        //             "method" => "POST",
+                        //         ],
+                        //     ],
+                        // ];
+    
+                        $paymentURL = $PaypalResult['links'][1];
+                    }
+    
+                }
+    
+                // if (isset($paymentURL)) {
+                    // $execution['payment'] = $paymentURL;
+                    $getSurveyInfo = Survey::where('id', '=', $request['survey_id'])->first();
+                    if ($getSurveyInfo) {
+                        $surveyID = $getSurveyInfo['survey_id'];
+    
+                    }
+    
+                    $transactionStructure = [
+                        'tagged_schedule_id' =>  $request['schedule_id_raw'],
+                        'survey_id' => $surveyID,
+                        'requested_amount' => $request['payment_amount'],
+                        'payment_url' => null,
+                        'status' => 0,
+                    ];
+    
+                    $transactionService = app(TransactionService::class);
+                    $createTransactionLog = $transactionService->store($transactionStructure);
+    
+                // }
+    
             }
-
-            if ($request['payment_gateway'] == 'paypal') {
-                $payment_amount = $request['payment_amount'];
-                if ($payment_amount > 100) {
-                    $createPaymentLink = $this->create_payment_link($request);
-                    // $PaypalResult = [
-                    //     "id" => "6XK7750295684622V",
-                    //     "status" => "CREATED",
-                    //     "links" => [
-                    //         [
-                    //             "href" => "https://api.sandbox.paypal.com/v2/checkout/orders/6XK7750295684622V",
-                    //             "rel" => "self",
-                    //             "method" => "GET",
-                    //         ],
-                    //         [
-                    //             "href" => "https://www.sandbox.paypal.com/checkoutnow?token=6XK7750295684622V",
-                    //             "rel" => "approve",
-                    //             "method" => "GET",
-                    //         ],
-                    //         [
-                    //             "href" => "https://api.sandbox.paypal.com/v2/checkout/orders/6XK7750295684622V",
-                    //             "rel" => "update",
-                    //             "method" => "PATCH",
-                    //         ],
-                    //         [
-                    //             "href" => "https://api.sandbox.paypal.com/v2/checkout/orders/6XK7750295684622V/capture",
-                    //             "rel" => "capture",
-                    //             "method" => "POST",
-                    //         ],
-                    //     ],
-                    // ];
-
-                    $paymentURL = $PaypalResult['links'][1];
-                }
-
-            }
-
-            // if (isset($paymentURL)) {
-                // $execution['payment'] = $paymentURL;
-                $getSurveyInfo = Survey::where('id', '=', $request['survey_id'])->first();
-                if ($getSurveyInfo) {
-                    $surveyID = $getSurveyInfo['survey_id'];
-
-                }
-
-                $transactionStructure = [
-                    'tagged_schedule_id' =>  $request['schedule_id_raw'],
-                    'survey_id' => $surveyID,
-                    'requested_amount' => $request['payment_amount'],
-                    'payment_url' => null,
-                    'status' => 0,
-                ];
-
-                $transactionService = app(TransactionService::class);
-                $createTransactionLog = $transactionService->store($transactionStructure);
-
-            // }
 
         }
+
 
 
 

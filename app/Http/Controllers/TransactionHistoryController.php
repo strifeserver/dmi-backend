@@ -267,6 +267,7 @@ class TransactionHistoryController extends Controller implements Paginatable
 
     public function destroy($db_table)
     {
+        
         $page_variables = $this->pageService->page_variables(['controller_variables' => $this->controller_variables(), 'mode' => 'index']);
         $db_table = $this->db_table->findOrFail($db_table);
 
@@ -279,7 +280,7 @@ class TransactionHistoryController extends Controller implements Paginatable
         } else {
             $return_msg = ['type' => 'error_comment', 'remarks' => 'Failed to Delete'];
         }
-        return redirect()->route($page_variables['destroy_page'])->with($return_msg['type'], $return_msg['remarks']);
+        return redirect()->to('/transactions');
     }
 
 }
