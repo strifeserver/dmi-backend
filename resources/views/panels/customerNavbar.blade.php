@@ -68,6 +68,9 @@
 
 
 
+    .no-wrap {
+        white-space: nowrap !important;
+    }
 
     .container_bar {
         display: inline-block;
@@ -97,10 +100,11 @@
     }
 
     @media screen and (min-width: 768px) {
-    .container_bar {
-        display: none;
+        .container_bar {
+            display: none;
+        }
+
     }
-}
 </style>
 
 <nav
@@ -144,15 +148,15 @@
             {{-- class="navbar-collapse" id="navbar-mobile" --}}
 
 
+            <center>
 
-            <div class="mobile-menu">
-                {{-- <button class="menu-toggle" onclick="toggleMenu()">Menu</button> --}}
-                <div class="container_bar" onclick="myFunction(this)">
-                    <div class="bar1"></div>
-                    <div class="bar2"></div>
-                    <div class="bar3"></div>
-                </div>
-                <center>
+                <div class="mobile-menu">
+                    {{-- <button class="menu-toggle" onclick="toggleMenu()">Menu</button> --}}
+                    <div class="container_bar" onclick="myFunction(this)">
+                        <div class="bar1"></div>
+                        <div class="bar2"></div>
+                        <div class="bar3"></div>
+                    </div>
 
                     <nav class="menu-items" id="menuItems" style="color:black;">
                         <div class="col-md-3" style="text-align: center; line-height: 2;">
@@ -168,7 +172,7 @@
                                 id="register_btn_mobile">Register</button>
                         </div>
                         <div class="col-md-3" style="text-align: center; line-height: 2;">
-                            <button class="btn btn-secondary waves-effect waves-light text-color"
+                            <button class="btn btn-secondary waves-effect waves-light text-color no-wrap"
                                 id="contact_btn_mobile">Contact
                                 Us</button>
                         </div>
@@ -179,8 +183,8 @@
                         </div>
 
                     </nav>
-                </center>
-            </div>
+                </div>
+            </center>
 
 
 
@@ -215,24 +219,24 @@
                         &nbsp;
                         {{-- class="btn btn-primary waves-effect waves-light" --}}
                     </div>
-                    <div class="col-md-2 " style="text-align: center; line-height: 2;">
+                    <div class="col-md-1 offset-md-2" style="text-align: center; line-height: 2;">
                         <button class="btn btn-secondary waves-effect waves-light text-color"
                             id="home_btn">Home</button>
                     </div>
-                    <div class="col-md-2 " style="text-align: center; line-height: 2;">
+                    <div class="col-md-1 " style="text-align: center; line-height: 2;">
                         <button class="btn btn-secondary waves-effect waves-light text-color"
                             id="book_btn">Book</button>
                     </div>
-                    <div class="col-md-2 " style="text-align: center; line-height: 2;">
+                    <div class="col-md-1 " style="text-align: center; line-height: 2;">
                         <button class="btn btn-secondary waves-effect waves-light text-color"
                             id="register_btn">Register</button>
                     </div>
-                    <div class="col-md-2 " style="text-align: center; line-height: 2;">
-                        <button class="btn btn-secondary waves-effect waves-light text-color" id="contact_btn">Contact
+                    <div class="col-md-1 " style="text-align: center; line-height: 2;">
+                        <button class="btn btn-secondary waves-effect waves-light text-color no-wrap" id="contact_btn">Contact
                             Us</button>
                     </div>
-                    <div class="col-md-2 " style="text-align: center; line-height: 2;">
-                        <button class="btn btn-secondary waves-effect waves-light text-color" id="about_us_btn">About
+                    <div class="col-md-1 " style="text-align: center; line-height: 2;">
+                        <button class="btn btn-secondary waves-effect waves-light text-color no-wrap" id="about_us_btn">About
                             Us</button>
                     </div>
 
@@ -366,6 +370,4 @@
 
 
     });
-
-
 </script>

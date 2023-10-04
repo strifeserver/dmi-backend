@@ -316,7 +316,6 @@ class ScheduleService
 
             }
         }
-        echo '<pre>';
 
         $checkTaggedTransaction = transaction::where('tagged_schedule_id','=',$request['schedule_id_raw'])->first();
         if(empty($checkTaggedTransaction)){

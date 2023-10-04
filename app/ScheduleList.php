@@ -21,6 +21,7 @@ class ScheduleList extends Model
         "end_date",
         "time",
         "description",
+        "remarks",
         "status",
     ];
 
@@ -171,6 +172,7 @@ class ScheduleList extends Model
             "schedule_title",
             "classes",
             "description",
+            "remarks",
             "status",
             "created_at",
             "updated_at",

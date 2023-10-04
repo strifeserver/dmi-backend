@@ -38,6 +38,8 @@ document.addEventListener("DOMContentLoaded", function () {
           var events = response.result.map(function (schedule) {
             console.log('LOAD SCHEDULES')
             console.log("LENGTH ", schedule.schedule_title.length);
+            console.log(schedule)
+
             // Rejected
             // Success
             // Pending
@@ -62,11 +64,11 @@ document.addEventListener("DOMContentLoaded", function () {
             var transaction_id = schedule.transaction_id ?? ''; 
             var transaction_status = schedule.transaction_status ?? ''; 
             
-            console.log(schedule)
             // console.log(truncatedString)
             // console.log(truncatedString+' '+schedule.schedule_title)
             return {
               schedule_id_raw: schedule.id,
+              remarks: schedule.remarks,
 
               schedule_id: schedule.survey_code,
               id: schedule.survey_code,
@@ -198,6 +200,9 @@ document.addEventListener("DOMContentLoaded", function () {
       $(".modal-calendar #cal-description").val(
         info.event.extendedProps.description
       );
+      $(".modal-calendar #cal-remarks").val(
+        info.event.extendedProps.remarks
+      );
       $("#schedule_id_raw").val(info.event._def.extendedProps.schedule_id_raw);
       $(".modal-calendar .cal-submit-event").removeClass("d-none");
       $(".modal-calendar .remove-event").removeClass("d-none");
@@ -288,6 +293,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const start_date = $("#cal-start-date").val();
     const end_date = $("#cal-end-date").val();
     const description = $("#cal-description").val();
+    const remarks = $("#cal-remarks").val();
     const payment_amount = $("#payment_amount").val();
     var chipElement = $(".chip-wrapper").find(".chip");
     var chipClass = chipElement.attr("class");
@@ -307,6 +313,7 @@ document.addEventListener("DOMContentLoaded", function () {
       date: start_date,
       end_date: end_date,
       description: description,
+      remarks: remarks,
       classes: chipClass,
       payment_amount: payment_amount,
       schedule_type: "scheduled",
@@ -447,6 +454,7 @@ document.addEventListener("DOMContentLoaded", function () {
       startDate = $("#cal-start-date").val(),
       endDate = $("#cal-end-date").val(),
       eventDescription = $("#cal-description").val(),
+      eventRemarks = $("#cal-remarks").val(),
       correctEndDate = new Date(endDate);
     calendar.addEvent({
       id: "newEvent",
@@ -454,6 +462,7 @@ document.addEventListener("DOMContentLoaded", function () {
       start: startDate,
       end: correctEndDate,
       description: eventDescription,
+      description: eventRemarks,
       color: evtColor,
       dataEventColor: eventColor,
       allDay: true,

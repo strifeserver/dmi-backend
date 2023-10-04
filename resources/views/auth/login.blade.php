@@ -93,7 +93,9 @@
                                             <input id="username" type="username"
                                                 class="form-control @error('username') is-invalid @enderror" name="username"
                                                 placeholder="Username" value="{{ old('username') }}" required
-                                                autocomplete="off" autofocus>
+                                                autocomplete="off" autofocus
+                                                maxlength="30"
+                                                >
 
                                             <div class="form-control-position">
                                                 <i class="feather icon-user"></i>
@@ -110,6 +112,8 @@
                                                 </a>
                                             </div>
                                             <input id="password" type="password"
+                                                maxlength="30"
+
                                                 class="form-control @error('password') is-invalid @enderror" name="password"
                                                 placeholder="Password" required autocomplete="current-password">
 
@@ -157,7 +161,7 @@
                                         <button type="submit" class="btn btn-primary float-right btn-inline">Login</button>
                                     </form>
 
-                                    <button id="home_button" type="submit" class="btn btn-primary float-right btn-inline"
+                                    <button hidden id="home_button" type="submit" class="btn btn-primary float-right btn-inline"
                                         style="margin-right: 10px;" onclick="homeRed()">Home</button>
 
                                 </div>

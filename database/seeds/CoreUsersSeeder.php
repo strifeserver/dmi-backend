@@ -53,6 +53,18 @@ class CoreUsersSeeder extends Seeder
             'password_updated_at' => Carbon::now()->format('Y-m-d H:i:s')
 
         ]);
+        DB::table('core_users')->insert([
+            'hash' => Crypt::encrypt('User'),
+            'password' => Hash::make('customer'),
+            'first_name' => Crypt::encrypt('User'),
+            'last_name' => Crypt::encrypt('test'),
+            'access_level' => '3',
+            'username' => 'customer1@demo.com',
+            'email' => Crypt::encrypt('customer@demo.com'),
+            'password' => Hash::make('customer'),
+            'password_updated_at' => Carbon::now()->format('Y-m-d H:i:s')
+
+        ]);
 
 
         $email_template[] = array(

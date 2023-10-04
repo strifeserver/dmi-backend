@@ -284,6 +284,10 @@
                                     <textarea class="form-control" id="cal-description" rows="5" placeholder="Description"></textarea>
                                     <label for="cal-description">Description</label>
                                 </fieldset>
+                                <fieldset class="form-label-group">
+                                    <textarea class="form-control" id="cal-remarks" rows="5" placeholder="Remarks"></textarea>
+                                    <label for="cal-description">Remarks</label>
+                                </fieldset>
 
                                 <fieldset id="payment_input" class="form-label-group payment_amount_prompt">
                                     <p>Payment Amount</p>
@@ -664,6 +668,7 @@
                     const start_date = $('#cal-start-date').val();
                     const end_date = $('#cal-end-date').val();
                     const description = $('#cal-description').val();
+                    const remarks = $('#cal-remarks').val();
                     const payment_amount = $('#payment_amount').val();
                     var chipElement = $('.chip-wrapper').find('.chip');
                     var chipClass = chipElement.attr('class');
@@ -677,6 +682,7 @@
                         date: start_date,
                         end_date: end_date,
                         description: description,
+                        remarks: remarks,
                         classes: chipClass,
                         schedule_type: 'scheduled',
                         payment_amount: payment_amount,
