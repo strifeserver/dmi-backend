@@ -7,12 +7,14 @@ use App\Services\ScheduleService;
 use App\Services\SurveyService;
 use App\Services\WorkerService;
 use App\Survey;
-use App\User;
 use App\transaction;
+use App\User;
+use DateInterval;
+use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use DateTime;
-use DateInterval;
+use Illuminate\Support\Facades\Session;
+
 class CoreDashboardsController extends Controller
 {
     /**
@@ -97,7 +99,7 @@ class CoreDashboardsController extends Controller
             $date = new DateTime("2023-09-27");
             $date->add(new DateInterval('P2D'));
 
-            $data['template_filters']['created_at']['to'] =  $date->format('Y-m-d');
+            $data['template_filters']['created_at']['to'] = $date->format('Y-m-d');
         }
 
         $pendingParams = [['status' => 'pending'], $data['template_filters']];
@@ -190,11 +192,44 @@ class CoreDashboardsController extends Controller
         ];
     }
 
+    public function hashValidator(){
+        $returns = [];
+        $encodedString = request('hash');
+        $decodedString = base64_decode($encodedString);
+        $token = Session::token();
+        $comparison = $token . ' == '.$decodedString;
+        $referrer = $_SERVER['HTTP_REFERER'] ?? null;
+
+
+
+        if (!Session::token() === $token) {
+            // Token mismatch, handle it as needed (e.g., return an error response)
+            return response()->json(['message' => 'CSRF Token mismatch'], 403);
+        }
+
+        // if (!Session::token() === $token) {
+        //     // Token mismatch, handle it as needed (e.g., return an error response)
+        //     return response()->json(['message' => 'CSRF Token mismatch'], 403);
+        // }
+        $returns['referrer'] = $referrer;
+        return $returns;
+    }
+
     public function schedules()
     {
         $ScheduleService = app(ScheduleService::class);
         $schedules = $ScheduleService->index([]);
 
+
+        $hashvalidator = $this->hashValidator();
+  
+        // $encodedString = request('hash');
+        // $decodedString = base64_decode($encodedString);
+        // $current_session = Session::token();
+        // $comparison = $current_session . ' == '.$decodedString;
+        // $referer = $_SERVER['HTTP_REFERER'];
+
+    
         $schedules["result"] = array_map(function ($item) {
             if (empty($item["end_date"])) {
                 $item["end_date"] = $item["start_date"];
@@ -208,7 +243,7 @@ class CoreDashboardsController extends Controller
 
                 }
                 $transaction = transaction::where('tagged_schedule_id', '=', $item['id'])->first();
-                if(!empty($transaction)){
+                if (!empty($transaction)) {
                     $item['transaction_id'] = $transaction['id'];
                     $item['transaction_amount'] = $transaction['requested_amount'];
                     $item['transaction_status'] = $transaction['status'];
@@ -218,6 +253,11 @@ class CoreDashboardsController extends Controller
             unset($item["date"]);
             return $item;
         }, $schedules["result"]);
+
+        $schedules['referrer'] = $hashvalidator['referrer'];
+        // echo '<pre>';
+        // print_r($schedules);
+        // exit;
 
         return $schedules;
     }
@@ -238,8 +278,6 @@ class CoreDashboardsController extends Controller
         // return $execution;
 
     }
-
-
 
     public function scheduleDelete(request $request)
     {

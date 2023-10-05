@@ -31,8 +31,12 @@ document.addEventListener("DOMContentLoaded", function () {
   var calendarEl = document.getElementById("fc-default");
   var calendar = new FullCalendar.Calendar(calendarEl, {
     events: function (info, successCallback, failureCallback) {
+      const csrfToken = $('meta[name="csrf-token"]').attr("content");
+      console.log('LODSCHED')
+      // console.log(encodeString(csrfToken));
+
       $.ajax({
-        url: window.location.origin + "/schedules",
+        url: window.location.origin + "/schedules?hash="+encodeString(csrfToken),
         dataType: "json",
         success: function (response) {
           var events = response.result.map(function (schedule) {
@@ -482,3 +486,10 @@ $("#create_payment_link").click(function() {
   $("#payment_input").show();
 
 });
+
+
+function encodeString(input) {
+  // Convert the input string to Base64
+  const encoded = btoa(input);
+  return encoded;
+}
