@@ -19,6 +19,7 @@ use DateTime;
 use Helper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Session;
 
 class SurveyController extends Controller implements Paginatable
 {
@@ -394,6 +395,53 @@ class SurveyController extends Controller implements Paginatable
         $survey = transaction::where('id','=',$id)->where('survey_id','=',$surveyId)->first();
         $survey->status = 1;
         $survey->save();
+
+        $hashvalidator = $this->hashValidator();
+        if ($hashvalidator['code'] != 200) {
+            return response()->json(['message' => $hashvalidator['message']], $hashvalidator['code']);
+        }
+
+
+
         return true;
     }
+
+
+
+
+    public function hashValidator()
+    {
+        $returns = [
+            'status' => 1,
+            'code' => 200,
+            'message' => '',
+        ];
+        $encodedString = request('hash');
+        $decodedString = base64_decode($encodedString);
+        $token = Session::token();
+        $comparison = $token . ' == ' . $decodedString;
+        $referrer = $_SERVER['HTTP_REFERER'] ?? null;
+
+        $allowedUrl = ['http://dmiph.online/', 'http://127.0.0.1:8000/'];
+
+        if (!Session::token() === $token) {
+            $returns['message'] = 'CSRF Token mismatch';
+            $returns['code'] = 403;
+            // Token mismatch, handle it as needed (e.g., return an error response)
+        }
+
+        if (!in_array($referrer, $allowedUrl)) {
+            // Token mismatch, handle it as needed (e.g., return an error response)
+            $returns['code'] = 403;
+            $returns['message'] = 'URL Not allowed';
+        }
+
+        $returns['referrer'] = $referrer;
+        return $returns;
+    }
+
+
+
+
+
 }

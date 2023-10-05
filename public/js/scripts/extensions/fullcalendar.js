@@ -332,9 +332,10 @@ document.addEventListener("DOMContentLoaded", function () {
       },
     });
     console.log(requestData);
+
     // Make an API request when the button is clicked
     $.ajax({
-      url: "/schedule_update",
+      url: "/schedule_update?hash" + encodeString(csrfToken),
       method: "POST", // Use POST method to send data
       data: requestData, // Pass the data object
       success: function (response) {

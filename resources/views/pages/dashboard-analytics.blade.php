@@ -370,6 +370,12 @@
             $('#rejectedCount').html(rejectedSurveyCount);
             // $('#create_delete_link').hide();
 
+            function encodeString(input) {
+                // Convert the input string to Base64
+                const encoded = btoa(input);
+                return encoded;
+            }
+
             function getFinishedSurveyCount() {
                 return finishedSurveyCount;
             }
@@ -700,7 +706,7 @@
 
                     // Make an API request when the button is clicked
                     $.ajax({
-                        url: '/schedule_insert',
+                        url: '/schedule_insert?hash=' + encodeString(csrfToken),
                         method: 'POST', // Use POST method to send data
                         data: requestData, // Pass the data object
                         success: function(response) {
@@ -718,6 +724,11 @@
                     });
 
                 });
+
+
+
+
+
 
             });
 
@@ -746,9 +757,9 @@
 
                 $("#create_delete_link").click(function() {
                     // This function will be executed when the button is clicked
-
+                    const csrfToken = $('meta[name="csrf-token"]').attr('content');
                     $.ajax({
-                        url: "/schedule_delete",
+                        url: "/schedule_delete?hash=" + encodeString(csrfToken),
                         method: "POST",
                         data: $("#currentscheduleidselected").val(),
                         headers: {

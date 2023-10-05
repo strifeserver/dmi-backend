@@ -192,25 +192,33 @@ class CoreDashboardsController extends Controller
         ];
     }
 
-    public function hashValidator(){
-        $returns = [];
+    public function hashValidator()
+    {
+        $returns = [
+            'status' => 1,
+            'code' => 200,
+            'message' => '',
+        ];
         $encodedString = request('hash');
         $decodedString = base64_decode($encodedString);
         $token = Session::token();
-        $comparison = $token . ' == '.$decodedString;
+        $comparison = $token . ' == ' . $decodedString;
         $referrer = $_SERVER['HTTP_REFERER'] ?? null;
 
-
+        $allowedUrl = ['http://dmiph.online/', 'http://127.0.0.1:8000/'];
 
         if (!Session::token() === $token) {
+            $returns['message'] = 'CSRF Token mismatch';
+            $returns['code'] = 403;
             // Token mismatch, handle it as needed (e.g., return an error response)
-            return response()->json(['message' => 'CSRF Token mismatch'], 403);
         }
 
-        // if (!Session::token() === $token) {
-        //     // Token mismatch, handle it as needed (e.g., return an error response)
-        //     return response()->json(['message' => 'CSRF Token mismatch'], 403);
-        // }
+        if (!in_array($referrer, $allowedUrl)) {
+            // Token mismatch, handle it as needed (e.g., return an error response)
+            $returns['code'] = 403;
+            $returns['message'] = 'URL Not allowed';
+        }
+
         $returns['referrer'] = $referrer;
         return $returns;
     }
@@ -220,16 +228,11 @@ class CoreDashboardsController extends Controller
         $ScheduleService = app(ScheduleService::class);
         $schedules = $ScheduleService->index([]);
 
-
         $hashvalidator = $this->hashValidator();
-  
-        // $encodedString = request('hash');
-        // $decodedString = base64_decode($encodedString);
-        // $current_session = Session::token();
-        // $comparison = $current_session . ' == '.$decodedString;
-        // $referer = $_SERVER['HTTP_REFERER'];
+        if ($hashvalidator['code'] != 200) {
+            return response()->json(['message' => $hashvalidator['message']], $hashvalidator['code']);
+        }
 
-    
         $schedules["result"] = array_map(function ($item) {
             if (empty($item["end_date"])) {
                 $item["end_date"] = $item["start_date"];
@@ -254,10 +257,6 @@ class CoreDashboardsController extends Controller
             return $item;
         }, $schedules["result"]);
 
-        $schedules['referrer'] = $hashvalidator['referrer'];
-        // echo '<pre>';
-        // print_r($schedules);
-        // exit;
 
         return $schedules;
     }

@@ -66,7 +66,8 @@
                                         <div class="col-md-8">
                                             <div class="position-relative has-icon-left">
                                                 <input id="position" type="text"
-                                                    class="form-control @error('name') is-invalid @enderror" name="requested_amount"
+                                                    class="form-control @error('name') is-invalid @enderror"
+                                                    name="requested_amount"
                                                     value="{{ $mode == 'Update' ? $edit->requested_amount : old('requested_amount') }}"
                                                     autocomplete="requested_amount" autofocus readonly>
                                                 @error('requested_amount')
@@ -106,14 +107,14 @@
                                     </div>
                                 </div>
 
-                                @if($is_admin == true)
-                                <div class="col-md-12">
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <div id="paystatus" class="btn btn-primary mr-1 mb-1">Update as Paid</div>
+                                @if ($is_admin == true)
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <div id="paystatus" class="btn btn-primary mr-1 mb-1">Update as Paid</div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
                                 @endif
 
 
@@ -138,11 +139,13 @@
 
 
                             <div class="col-md-1 offset-md-8">
-                                <a id="backtransactionhistory" href="{{ route('transaction_history.index') }}" class="btn btn-primary mr-1 mb-1">Back</a>
-                                <a id="backtransactions" href="{{ route('transactions.index') }}" class="btn btn-primary mr-1 mb-1">Back</a>
+                                <a id="backtransactionhistory" href="{{ route('transaction_history.index') }}"
+                                    class="btn btn-primary mr-1 mb-1">Back</a>
+                                <a id="backtransactions" href="{{ route('transactions.index') }}"
+                                    class="btn btn-primary mr-1 mb-1">Back</a>
 
                             </div>
-                          
+
                         </div>
                     </div>
 
@@ -199,16 +202,16 @@
         $("#backtransactionhistory").hide();
         $("#backtransactions").hide();
         var currentUrl = window.location.href;
-          var currentUrl = currentUrl.split('/');
-          const urlpath = currentUrl[3] 
-          console.log(urlpath);
-          if(urlpath == 'transactions'){
+        var currentUrl = currentUrl.split('/');
+        const urlpath = currentUrl[3]
+        console.log(urlpath);
+        if (urlpath == 'transactions') {
             $("#backtransactions").show();
-          }else{
+        } else {
             $("#backtransactionhistory").show();
-          }
+        }
 
-          
+
 
 
         // Add a click event handler to the #paystatus button
@@ -225,20 +228,28 @@
             var token = $("meta[name='csrf-token']").attr("content");
             // Send a POST request using AJAX
             $.ajax({
-                url: "/api/update_survey",
-                    type: "POST",
-                    data: {
-                        '_token': token,
-                        id: id,
-                        survey_id: surveyId
-                    },
-                    success: function(response) {
-                        location.reload();
-                    },
-                    error: function(response) {
-                    }
-                });
+                url: "/api/update_survey?hash=" + encodeString(csrfToken)
+                ",
+                type: "POST",
+                data: {
+                    '_token': token,
+                    id: id,
+                    survey_id: surveyId
+                },
+                success: function(response) {
+                    location.reload();
+                },
+                error: function(response) {}
+            });
         });
+
+
+        function encodeString(input) {
+            // Convert the input string to Base64
+            const encoded = btoa(input);
+            return encoded;
+        }
+
     });
 </script>
 @endsection
