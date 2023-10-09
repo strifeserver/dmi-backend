@@ -111,8 +111,8 @@
 
     @media (min-width: 1024px) {
         .btn1menu {
-            margin-left: 220px;
-            max-width: 6% !important;
+            margin-left: 190px;
+            max-width: 7% !important;
         }
 
         .btn2menu {
@@ -120,11 +120,11 @@
         }
 
         .btn3menu {
-            max-width: 8% !important;
+            max-width: 9% !important;
         }
 
         .btn4menu {
-            max-width: 9.5% !important;
+            max-width: 10% !important;
         }
 
         .btn5menu {
@@ -134,19 +134,19 @@
     @media (min-width: 1380px) {
         .btn1menu {
             margin-left: 420px;
-            max-width: 4% !important;
+            max-width: 5.3% !important;
         }
 
         .btn2menu {
-            max-width: 3.5% !important;
+            max-width: 4.5% !important;
         }
 
         .btn3menu {
-            max-width: 5% !important;
+            max-width: 6% !important;
         }
 
         .btn4menu {
-            max-width: 6.5% !important;
+            max-width: 7% !important;
         }
 
         .btn5menu {
