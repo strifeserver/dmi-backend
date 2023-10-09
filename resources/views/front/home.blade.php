@@ -41,6 +41,13 @@
     <style>
         body {
             overflow-x: hidden;
+            scrollbar-width: none;
+            /* Firefox */
+            -ms-overflow-style: none;
+            /* IE and Edge */
+            overflow: -moz-scrollbars-none;
+            /* Old Firefox */
+            overscroll-behavior: none;
         }
 
         @font-face {
@@ -387,6 +394,57 @@
                 window.location.href = '/register';
             });
         } catch (error) {
+
+        }
+
+
+        let startX;
+
+        document.addEventListener('touchstart', function(event) {
+            startX = event.touches[0].pageX;
+        });
+
+
+
+
+        document.addEventListener('touchmove', function(event) {
+            // const deltaX = startX - currentX;
+            // const currentX = event.touches[0].pageX;
+
+            if (Math.abs(event.changedTouches[0].clientX) > 250) {
+                console.log(event.changedTouches[0].clientX)
+                const scrollContainer = document.querySelector(
+                    '#home_section'); // Replace with your element selector
+                scrollContainer.scrollLeft = 0;
+                // event.preventDefault();
+
+
+
+
+
+            }
+        });
+
+        document.addEventListener('touchmove', function(event) {
+            const scrollableElement = document.documentElement; // Change this to your desired scrollable element
+            const scrollTop = scrollableElement.scrollTop;
+            const scrollHeight = scrollableElement.scrollHeight;
+            const clientHeight = scrollableElement.clientHeight;
+
+            if ((scrollTop === 0 && event.deltaY < 0) || (scrollTop + clientHeight >= scrollHeight && event.deltaY >
+                    0)) {
+                event.preventDefault();
+            }
+        });
+
+
+        // Detect if the browser supports overscroll-behavior
+        if ('overscrollBehavior' in document.documentElement.style) {
+            console.log('OVER')
+            // Apply overscroll-behavior property to the HTML and body elements
+            document.documentElement.style.overscrollBehavior = 'none';
+            document.body.style.overscrollBehavior = 'none';
+            event.preventDefault();
 
         }
     </script>
