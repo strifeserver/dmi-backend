@@ -111,20 +111,20 @@
 
     @media (min-width: 1024px) {
         .btn1menu {
-            margin-left: 190px;
-            max-width: 7% !important;
+            margin-left: 185px;
+            max-width: 7.5% !important;
         }
 
         .btn2menu {
-            max-width: 6.5% !important;
+            max-width: 7% !important;
         }
 
         .btn3menu {
-            max-width: 9% !important;
+            max-width: 9.5% !important;
         }
 
         .btn4menu {
-            max-width: 10% !important;
+            max-width: 10.5% !important;
         }
 
         .btn5menu {
@@ -133,20 +133,20 @@
     }
     @media (min-width: 1380px) {
         .btn1menu {
-            margin-left: 420px;
-            max-width: 5.3% !important;
-        }
-
-        .btn2menu {
-            max-width: 4.5% !important;
-        }
-
-        .btn3menu {
+            margin-left: 380px;
             max-width: 6% !important;
         }
 
+        .btn2menu {
+            max-width: 5% !important;
+        }
+
+        .btn3menu {
+            max-width: 6.5% !important;
+        }
+
         .btn4menu {
-            max-width: 7% !important;
+            max-width: 7.4% !important;
         }
 
         .btn5menu {
