@@ -8,7 +8,7 @@
         class="footer {{ $configData['footerType'] }} {{($configData['footerType']=== 'footer-hidden') ? 'd-none':''}} footer-light">
         @endif
         <p class="clearfix blue-grey lighten-2 mb-0" ><span
-                class="float-md-left d-block d-md-inline-block mt-25">{{$configData['footer_title']}}</span>
+                {{-- class="float-md-left d-block d-md-inline-block mt-25">{{$configData['footer_title']}}</span> --}}
         </p>
     </footer>
     <!-- END: Footer-->
