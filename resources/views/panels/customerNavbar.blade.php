@@ -219,7 +219,7 @@
                         &nbsp;
                         {{-- class="btn btn-primary waves-effect waves-light" --}}
                     </div>
-                    <div class="col-md-1 offset-md-2" style="text-align: center; line-height: 2;">
+                    <div class="col-md-1 offset-md-2 offset-lg-3" style="text-align: center; line-height: 2;">
                         <button class="btn btn-secondary waves-effect waves-light text-color"
                             id="home_btn">Home</button>
                     </div>

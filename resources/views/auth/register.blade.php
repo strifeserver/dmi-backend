@@ -33,7 +33,9 @@
                                             <input id="first_name" type="text"
                                                 class="form-control @error('first_name') is-invalid @enderror"
                                                 name="first_name" placeholder="First Name" value="{{ old('first_name') }}"
-                                                required autocomplete="First Name">
+                                                required autocomplete="First Name"
+                                                maxlength="30"
+                                                >
                                             <label for="first_name">first_name</label>
                                             @error('first_name')
                                                 <span class="invalid-feedback" role="alert">
@@ -48,7 +50,10 @@
                                             <input id="last_name" type="text"
                                                 class="form-control @error('last_name') is-invalid @enderror"
                                                 name="last_name" placeholder="Last Name" value="{{ old('last_name') }}"
-                                                required autocomplete="Last Name">
+                                                required autocomplete="Last Name"
+                                                maxlength="30"
+
+                                                >
                                             <label for="last_name">last_name</label>
                                             @error('last_name')
                                                 <span class="invalid-feedback" role="alert">
@@ -62,7 +67,10 @@
                                             <input id="email" type="email"
                                                 class="form-control @error('email') is-invalid @enderror" name="email"
                                                 placeholder="Email" value="{{ old('email') }}" required
-                                                autocomplete="email">
+                                                autocomplete="email"
+                                                maxlength="30"
+                                                
+                                                >
                                             <label for="email">Email</label>
                                             @error('email')
                                                 <span class="invalid-feedback" role="alert">
@@ -77,7 +85,10 @@
                                             <input id="mobile_number" type="text"
                                                 class="form-control @error('mobile_number') is-invalid @enderror"
                                                 name="mobile_number" placeholder="Mobile Number (optional)" value="{{ old('mobile_number') }}"
-                                                 autocomplete="Mobile Number">
+                                                autocomplete="Mobile Number"
+                                                maxlength="30"
+
+                                                 >
                                             <label for="mobile_number">mobile_number</label>
                                             @error('mobile_number')
                                                 <span class="invalid-feedback" role="alert">
@@ -91,7 +102,10 @@
                                             <!-- <input type="password" id="inputPassword" class="form-control" placeholder="Password" required> -->
                                             <input id="password" type="password"
                                                 class="form-control @error('password') is-invalid @enderror" name="password"
-                                                placeholder="Password" required autocomplete="new-password">
+                                                placeholder="Password" required autocomplete="new-password"
+                                                maxlength="30"
+                                                
+                                                >
                                             <label for="password">Password</label>
                                             @error('password')
                                                 <span class="invalid-feedback" role="alert">
@@ -103,7 +117,10 @@
                                             <!-- <input type="password" id="inputConfPassword" class="form-control" placeholder="Confirm Password" required> -->
                                             <input id="password-confirm" type="password" class="form-control"
                                                 name="password_confirmation" placeholder="Confirm Password" required
-                                                autocomplete="new-password">
+                                                autocomplete="new-password"
+                                                maxlength="30"
+                                                
+                                                >
                                             <label for="password-confirm">Confirm Password</label>
                                         </div>
                                         <div class="form-group row">
@@ -121,12 +138,12 @@
                                                 </fieldset>
                                             </div>
                                         </div>
-                                        <a href="login"
+                                        <a hidden href="login"
                                             class="btn btn-outline-primary float-left btn-inline mb-50">Login</a>
                                         <button type="submit"
                                             class="btn btn-primary float-right btn-inline mb-50">Register</a>
                                     </form>
-                                    <button id="home_button" type="submit"
+                                    <button hidden id="home_button" type="submit"
                                         class="btn btn-primary float-right btn-inline" style="margin-right: 10px;"
                                         onclick="homeRed()">Home</button>
                                 </div>
