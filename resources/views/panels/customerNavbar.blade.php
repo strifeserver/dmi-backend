@@ -105,6 +105,78 @@
         }
 
     }
+
+
+
+
+    @media (min-width: 1024px) {
+        .btn1menu {
+            margin-left: 220px;
+            max-width: 6% !important;
+        }
+
+        .btn2menu {
+            max-width: 6.5% !important;
+        }
+
+        .btn3menu {
+            max-width: 8% !important;
+        }
+
+        .btn4menu {
+            max-width: 9.5% !important;
+        }
+
+        .btn5menu {
+            max-width: 3.5% !important;
+        }
+    }
+    @media (min-width: 1380px) {
+        .btn1menu {
+            margin-left: 420px;
+            max-width: 4% !important;
+        }
+
+        .btn2menu {
+            max-width: 3.5% !important;
+        }
+
+        .btn3menu {
+            max-width: 5% !important;
+        }
+
+        .btn4menu {
+            max-width: 6.5% !important;
+        }
+
+        .btn5menu {
+            max-width: 3.5% !important;
+        }
+    }
+
+    @media (min-width: 1680px) {
+        .btn1menu {
+            margin-left: 720px;
+            max-width: 4% !important;
+        }
+
+        .btn2menu {
+            max-width: 3.5% !important;
+        }
+
+        .btn3menu {
+            max-width: 5% !important;
+        }
+
+        .btn4menu {
+            max-width: 6.5% !important;
+        }
+
+        .btn5menu {
+            max-width: 3.5% !important;
+        }
+    }
+    
 </style>
 
 <nav
@@ -217,26 +289,34 @@
                         &nbsp;
                         &nbsp;
                         &nbsp;
+
+                        
+
+
+
+
                         {{-- class="btn btn-primary waves-effect waves-light" --}}
                     </div>
-                    <div class="col-md-1 offset-md-2 offset-lg-3" style="text-align: center; line-height: 2;">
+                    <div class="col-md-1 offset-md-2 offset-lg-3 btn1menu" style="text-align: center; line-height: 2;">
                         <button class="btn btn-secondary waves-effect waves-light text-color"
                             id="home_btn">Home</button>
                     </div>
-                    <div class="col-md-1 " style="text-align: center; line-height: 2;">
+                    <div class="col-md-1 btn2menu" style="text-align: center; line-height: 2;">
                         <button class="btn btn-secondary waves-effect waves-light text-color"
                             id="book_btn">Book</button>
                     </div>
-                    <div class="col-md-1 " style="text-align: center; line-height: 2;">
+                    <div class="col-md-1 btn3menu" style="text-align: center; line-height: 2;">
                         <button class="btn btn-secondary waves-effect waves-light text-color"
                             id="register_btn">Register</button>
                     </div>
-                    <div class="col-md-1 " style="text-align: center; line-height: 2;">
-                        <button class="btn btn-secondary waves-effect waves-light text-color no-wrap" id="contact_btn">Contact
+                    <div class="col-md-1 btn4menu" style="text-align: center; line-height: 2;">
+                        <button class="btn btn-secondary waves-effect waves-light text-color no-wrap"
+                            id="contact_btn">Contact
                             Us</button>
                     </div>
-                    <div class="col-md-1 " style="text-align: center; line-height: 2;">
-                        <button class="btn btn-secondary waves-effect waves-light text-color no-wrap" id="about_us_btn">About
+                    <div class="col-md-1 btn5menu" style="text-align: center; line-height: 2;">
+                        <button class="btn btn-secondary waves-effect waves-light text-color no-wrap"
+                            id="about_us_btn">About
                             Us</button>
                     </div>
 

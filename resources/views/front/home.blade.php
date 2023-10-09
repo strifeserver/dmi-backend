@@ -189,6 +189,30 @@
                 background-position: 0 0;
             }
         }
+
+
+
+        /* .btn1menu{
+            margin-left: 420px;
+            max-width: 4% !important;
+        }
+        .btn2menu{
+            max-width: 3.5% !important;
+        }
+        .btn3menu{
+            max-width: 5% !important;
+        }
+        .btn4menu{
+            max-width: 6.5% !important;
+        }
+        .btn5menu{
+            max-width: 3.5% !important;
+        } */
+
+        
+
+
+
     </style>
     <section style="height:50px;">
 
