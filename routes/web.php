@@ -134,5 +134,6 @@ Route::get('/paymongo_cancel', 'PaymentController@paymongoGcashCancel');
 
 
 Route::delete('/remove_transaction/{id}', 'TransactionHistoryController@destroy');
+Route::get('/dpa', 'CoreDashboardsController@dpa');
 
 // Route::get('/tessss', 'TransactionHistoryController@destroy')->name('transaction_history.destroy');

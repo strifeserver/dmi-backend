@@ -287,4 +287,10 @@ class CoreDashboardsController extends Controller
         $execution = $ScheduleService->destroy($id);
 
     }
+
+    public function dpa()
+    {
+
+        return view('auth.dta');
+    }
 }
