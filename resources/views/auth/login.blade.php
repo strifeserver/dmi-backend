@@ -216,10 +216,13 @@
 
 @section('page-script')
     <script>
-        Swal.fire({
-            title: '<strong>Data Privacy Notice</strong>',
-            icon: 'info',
-            html: `
+        // Check if the alert cookie exists
+        if (!getCookie('alertShown')) {
+            // Show the SweetAlert
+            Swal.fire({
+                title: '<strong>Data Privacy Notice</strong>',
+                icon: 'info',
+                html: `
     
     <h2>1. Information We Collect:</h2>
     <p>We may collect and process the following types of personal information:</p>
@@ -274,14 +277,28 @@
 
 
     `,
-            showCloseButton: true,
-            showCancelButton: false,
-            focusConfirm: false,
-            confirmButtonText: '<i class="fa fa-thumbs-up"></i> Close',
-            // confirmButtonAriaLabel: 'Thumbs up, great!',
-            // cancelButtonText: '<i class="fa fa-thumbs-down"></i>',
-            // cancelButtonAriaLabel: 'Thumbs down',
+                showCloseButton: true,
+                showCancelButton: false,
+                focusConfirm: false,
+                confirmButtonText: '<i class="fa fa-thumbs-up"></i> Close',
+            }).then(() => {
+                // Set a cookie to indicate that the alert has been shown (expires in 7 days)
+                setCookie('alertShown', 'true', 7);
+            });
+        }
 
-        });
+        // Function to get a cookie by name
+        function getCookie(name) {
+            var match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+            return match ? match[2] : null;
+        }
+
+        // Function to set a cookie with an expiration date in days
+        function setCookie(name, value, days) {
+            var date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            var expires = 'expires=' + date.toUTCString();
+            document.cookie = name + '=' + value + '; ' + expires;
+        }
     </script>
 @endsection
