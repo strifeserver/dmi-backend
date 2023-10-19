@@ -29,6 +29,11 @@
     @extends($configData['mainLayoutType'] === 'horizontal' ? 'layouts.frontLayoutMaster' : 'layouts.frontLayoutMaster')
 @endisset
 
+@section('page-style')
+    {{-- Page Css files --}}
+    <link rel="stylesheet" href="{{ asset(mix('vendors/css/extensions/sweetalert2.min.css')) }}">
+
+@endsection
 @section('content')
     <link rel="stylesheet" href="https://unpkg.com/aos@2.3.0/dist/aos.css" />
 
@@ -84,7 +89,14 @@
         }
 
 
+        .swal2-popup {
+            width: 900px !important;
+            /* Set the desired width here */
+        }
 
+        .swal2-popup .swal2-content {
+            text-align: left !important;
+        }
 
         .carousel {
             width: 100%;
@@ -349,6 +361,9 @@
     </section>
     <section class="filler" style="background-color: #658347;">
         <hr>
+        <a href="/dpa" target="_blank" style="color:white; font-weight: bold; font-size: 16px;" class="ml-4">Data Privacy</a>
+        <br>
+        <a href="#contact_us_section"  style="color:white; font-weight: bold; font-size: 16px;" class="ml-4">Contact Us</a>
     </section>
 
     <script>
@@ -470,6 +485,105 @@
             document.body.style.overscrollBehavior = 'none';
             event.preventDefault();
 
+        }
+    </script>
+@endsection
+
+
+@section('vendor-script')
+    <!-- vendor files -->
+    <script src="{{ asset(mix('vendors/js/extensions/sweetalert2.all.min.js')) }}"></script>
+@endsection
+
+@section('page-script')
+    <script>
+        // Check if the alert cookie exists
+        if (!getCookie('alertShown')) {
+            // Show the SweetAlert
+            Swal.fire({
+                title: '<strong>Data Privacy Notice</strong>',
+                icon: 'info',
+                html: `
+    
+    <h2>1. Information We Collect:</h2>
+    <p>We may collect and process the following types of personal information:</p>
+    
+        <p>Personal information, such as your name, email address, and contact details.</p>
+        <p>Information you provide when using our services or website.</p>
+        <p>Information about your interactions with our API on dmiph.online.</p>
+    
+
+    <h2>2. How We Use Your Data:</h2>
+    <p>We use your data for the following purposes:</p>
+    
+        <p>To provide you with our services and support.</p>
+        <p>To improve our services and tailor them to your needs.</p>
+        <p>To communicate with you regarding updates, changes, or issues with our services.</p>
+        <p>To ensure the security of our API on dmiph.online.</p>
+    
+
+    <h2>3. Accepting Cookies:</h2>
+    <p>We use cookies to enhance your experience on our website. By clicking "Close" or continuing to use our site, you agree to our use of cookies. For more information</p>
+    
+
+    <h2>4. Data Security:</h2>
+    <p>We take the security of your data seriously and have implemented the following measures:</p>
+    
+        <p>Encryption: Data transmitted to and from our services, including API interactions, is encrypted using secure protocols.</p>
+        <p>Access Control: We restrict access to your data to authorized personnel only.</p>
+        <p>Regular Security Audits: We conduct security audits to identify and address potential vulnerabilities.</p>
+        <p>Data Backup: We regularly back up data to prevent data loss in case of unexpected events.</p>
+    
+
+    <h2>5. API Access on dmiph.online:</h2>
+    <p>Access to our API is restricted to the dmiph.online site. We ensure that:</p>
+    
+        <p>API Access Control: We use access controls and authentication methods to verify that API access is granted only to authorized users and systems.</p>
+        <p>Continuous Monitoring: Our security team constantly monitors API access to detect and respond to any unauthorized or suspicious activity.</p>
+        <p>Data Transmission Security: API data transmitted to and from dmiph.online is encrypted to protect it from interception or tampering.</p>
+    
+
+    <h2>6. Your Rights:</h2>
+    <p>You have the following rights regarding your personal information:</p>
+    
+        <p>The right to access and request a copy of your data.</p>
+        <p>The right to rectify or update your data.</p>
+        <p>The right to delete your data under certain circumstances.</p>
+        <p>The right to object to the processing of your data.</p>
+    
+
+    <h2>7. Contact Information:</h2>
+    <p>If you have any questions, concerns, or requests regarding your data or our data privacy practices, please contact us at [Contact Email/Phone Number].</p>
+
+    <h2>8. Changes to This Privacy Notice:</h2>
+    <p>We may update this privacy notice to reflect changes in our data practices. Please check this notice regularly for updates.</p>
+
+    <p>Your privacy is important to us, and we are committed to safeguarding your data. We appreciate your trust in DMI.</p>
+
+
+    `,
+                showCloseButton: true,
+                showCancelButton: false,
+                focusConfirm: false,
+                confirmButtonText: '<i class="fa fa-thumbs-up"></i> Close',
+            }).then(() => {
+                // Set a cookie to indicate that the alert has been shown (expires in 7 days)
+                setCookie('alertShown', 'true', 7);
+            });
+        }
+
+        // Function to get a cookie by name
+        function getCookie(name) {
+            var match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+            return match ? match[2] : null;
+        }
+
+        // Function to set a cookie with an expiration date in days
+        function setCookie(name, value, days) {
+            var date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            var expires = 'expires=' + date.toUTCString();
+            document.cookie = name + '=' + value + '; ' + expires;
         }
     </script>
 @endsection
