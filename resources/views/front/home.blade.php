@@ -32,7 +32,6 @@
 @section('page-style')
     {{-- Page Css files --}}
     <link rel="stylesheet" href="{{ asset(mix('vendors/css/extensions/sweetalert2.min.css')) }}">
-
 @endsection
 @section('content')
     <link rel="stylesheet" href="https://unpkg.com/aos@2.3.0/dist/aos.css" />
@@ -53,6 +52,10 @@
             overflow: -moz-scrollbars-none;
             /* Old Firefox */
             overscroll-behavior: none;
+        }
+
+        body.overlay-visible {
+            overflow: hidden !important;
         }
 
         @font-face {
@@ -205,26 +208,21 @@
 
 
         /* .btn1menu{
-            margin-left: 420px;
-            max-width: 4% !important;
-        }
-        .btn2menu{
-            max-width: 3.5% !important;
-        }
-        .btn3menu{
-            max-width: 5% !important;
-        }
-        .btn4menu{
-            max-width: 6.5% !important;
-        }
-        .btn5menu{
-            max-width: 3.5% !important;
-        } */
-
-        
-
-
-
+                                margin-left: 420px;
+                                max-width: 4% !important;
+                            }
+                            .btn2menu{
+                                max-width: 3.5% !important;
+                            }
+                            .btn3menu{
+                                max-width: 5% !important;
+                            }
+                            .btn4menu{
+                                max-width: 6.5% !important;
+                            }
+                            .btn5menu{
+                                max-width: 3.5% !important;
+                            } */
     </style>
     <section style="height:50px;">
 
@@ -287,6 +285,9 @@
         <hr>
 
     </section>
+    <div id="overlay"
+        style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 999;">
+    </div>
 
     <section id="about_us_section" class="defaultextcolor" data-aos="fade-up">
         <br>
@@ -361,9 +362,10 @@
     </section>
     <section class="filler" style="background-color: #658347;">
         <hr>
-        <a href="/dpa" target="_blank" style="color:white; font-weight: bold; font-size: 16px;" class="ml-4">Data Privacy</a>
+        <a href="/dpa" target="_blank" style="color:white; font-weight: bold; font-size: 16px;" class="ml-4">Data
+            Privacy</a>
         <br>
-        <a href="#contact_us_section"  style="color:white; font-weight: bold; font-size: 16px;" class="ml-4">Contact Us</a>
+        <a href="#contact_us_section" style="color:white; font-weight: bold; font-size: 16px;" class="ml-4">Contact Us</a>
     </section>
 
     <script>
@@ -523,7 +525,7 @@
     
 
     <h2>3. Accepting Cookies:</h2>
-    <p>We use cookies to enhance your experience on our website. By clicking "Close" or continuing to use our site, you agree to our use of cookies. For more information</p>
+    <p>We use cookies to enhance your experience on our website. By clicking "Disagree" or continuing to use our site, you agree to our use of cookies. For more information</p>
     
 
     <h2>4. Data Security:</h2>
@@ -553,7 +555,8 @@
     
 
     <h2>7. Contact Information:</h2>
-    <p>If you have any questions, concerns, or requests regarding your data or our data privacy practices, please contact us at [Contact Email/Phone Number].</p>
+    <p>If you have any questions, concerns, or requests regarding your data or our data privacy practices, please
+                contact us at dmi@dmionlineph.com .</p>
 
     <h2>8. Changes to This Privacy Notice:</h2>
     <p>We may update this privacy notice to reflect changes in our data practices. Please check this notice regularly for updates.</p>
@@ -562,13 +565,44 @@
 
 
     `,
-                showCloseButton: true,
-                showCancelButton: false,
-                focusConfirm: false,
-                confirmButtonText: '<i class="fa fa-thumbs-up"></i> Close',
-            }).then(() => {
-                // Set a cookie to indicate that the alert has been shown (expires in 7 days)
-                setCookie('alertShown', 'true', 7);
+                showCloseButton: false, // Remove the close button
+                showCancelButton: true, // Show the "Disagree" button
+                showConfirmButton: true, // Show the "I Agree" button
+                focusConfirm: true,
+                confirmButtonText: '<i class="fa fa-thumbs-up"></i> I agree',
+                cancelButtonText: 'Disagree',
+            }).then((result) => {
+                console.log(result);
+                if (result['value'] == true) {
+                    // User clicked "I Agree"
+                    // Set a cookie to indicate that the alert has been shown (expires in 7 days)
+                    setCookie('alertShown', 'true', 7);
+
+                    // Hide the overlay
+                    document.getElementById('overlay').style.display = 'none';
+
+                    // Allow scrolling
+                    document.body.classList.remove('overlay-visible');
+
+                    // Remove the event listener to enable mouse scrolling
+                    window.removeEventListener('wheel', preventScroll, {
+                        passive: false
+                    });
+
+                    // Proceed with your application logic here
+                } else {
+                    // User clicked "Disagree" or closed the dialog
+                    // Display a message and prevent further action
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'You have disagreed to the Privacy Notice',
+                        text: 'You cannot proceed further until you agree to our Privacy Notice.',
+                    });
+
+                    // Leave the overlay visible to prevent further interactions
+                    // Disable the mouse scroll wheel
+                    disableMouseScroll();
+                }
             });
         }
 
@@ -584,6 +618,21 @@
             date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
             var expires = 'expires=' + date.toUTCString();
             document.cookie = name + '=' + value + '; ' + expires;
+        }
+
+
+        function disableMouseScroll() {
+            window.addEventListener('wheel', preventScroll, {
+                passive: false
+            });
+        }
+
+        function preventScroll(e) {
+            e.preventDefault();
+        }
+
+        if (getCookie('alertShown') == 'true') {
+            document.getElementById('overlay').style.display = 'none';
         }
     </script>
 @endsection
